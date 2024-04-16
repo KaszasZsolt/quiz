@@ -16,8 +16,8 @@ $conn = connect_to_database();
 $errors = array();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = $_POST['username'];
-    $password = $_POST['password'];
+    $username = $_POST['username'] ?? '';
+    $password = $_POST['password'] ?? '';
 
     if (empty($username) || empty($password)) {
         $errors[] = "Felhasználónév és jelszó megadása kötelező!";

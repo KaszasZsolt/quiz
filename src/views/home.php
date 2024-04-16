@@ -9,6 +9,10 @@
     <?php include('../controllers/home_controller.php'); ?>
     <h2>Üdvözöllek, <?php echo $user['NEV']; ?>!</h2>
     <p>Ez az otthoni oldal. Ide juthatsz csak bejelentkezés után.</p>
+
+    <a href="./room.php">Szoba kezelés</a>
+
+
     <a href="../controllers/logout.php">Kijelentkezés</a>
 </body>
 </html>

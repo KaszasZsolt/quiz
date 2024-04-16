@@ -157,7 +157,7 @@ close_database_connection($conn);
     <title>Szobák Kezelése</title>
 </head>
 <body>
-
+<?php include('./header.php'); ?>
     <h2>Szobák Kezelése</h2>
 
     <!-- Szobák listázása -->

@@ -13,8 +13,7 @@ function connect_to_database() {
     )
     )";
 
-    $conn = oci_connect($USERNAME,$PASSWORD,$dbstr1);
-
+    $conn = oci_connect($USERNAME,$PASSWORD,$dbstr1,'AL32UTF8');
     if(!$conn){
         $m = oci_error();
         echo $m['message'], "\n";

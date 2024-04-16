@@ -6,9 +6,11 @@
     <title>Quiz témák kezelése</title>
 </head>
 <body>
+<?php include('./header.php'); ?>
     <?php
-    session_start();
-
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
     include('../../includes/functions.php');
     include('../../config/db_connection.php');
 
@@ -79,11 +81,11 @@
             // Frissítsük az oldalt, hogy a törlés megjelenjen
             echo "<meta http-equiv='refresh' content='0'>";
         }
-        echo '<a href="./home.php">Home</a>';
+        echo '<a href="./home.php">Főoldal</a>';
         echo '</div>';
     } else {
         echo 'Nincs jogosultsága az admin részhez.';
-        echo '<a href="./home.php">Home</a>';
+        echo '<a href="./home.php">Főoldal</a>';
     }
 
     close_database_connection($conn);

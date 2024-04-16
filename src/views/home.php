@@ -7,6 +7,8 @@
 </head>
 <body>
     <?php include('../controllers/home_controller.php'); ?>
+    <?php include('./header.php'); ?>
+
     <h2>Üdvözöllek, <?php echo $user['NEV']; ?>!</h2>
     <p>Ez az otthoni oldal. Ide juthatsz csak bejelentkezés után.</p>
 

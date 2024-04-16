@@ -6,9 +6,9 @@
     <title>Regisztráció</title>
 </head>
 <body>
-    <h2>Regisztráció</h2>
-
+    <?php include('./header.php'); ?>
     <?php include('../controllers/register_controller.php'); ?>
+    <h2>Regisztráció</h2>
 
     <?php if (!empty($errors)): ?>
         <ul>

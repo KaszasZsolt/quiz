@@ -23,6 +23,7 @@ if ($conn) {
     <title>Adatbázis kapcsolat ellenőrzése</title>
 </head>
 <body>
+<?php include('./header.php'); ?>
         <form action="login.php" method="post">
             <button type="submit">Tovább a bejelentkezéshez</button>
         </form>

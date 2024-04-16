@@ -6,6 +6,7 @@
     <title>Bejelentkezés</title>
 </head>
 <body>
+<?php include('./header.php'); ?>
     <h2>Bejelentkezés</h2>
     <?php include('../controllers/login_controller.php'); ?>
 

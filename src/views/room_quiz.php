@@ -18,9 +18,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['save_question'])) {
         // Kérdés mentése
         $question = $_POST['question'];
-        $query_insert_question = oci_parse($conn, "INSERT INTO kerdes (kerdes, tema_id) VALUES (:question, :theme_id)");
+        $theme_id = $_POST['theme_id'];
+        $is_global = isset($_POST['is_global']) ? 1 : 0;
+
+        // Kérdés beszúrása a 'kerdes' táblába
+        $query_insert_question = oci_parse($conn, "INSERT INTO kerdes (kerdes, tema_id, felhasznalo_id, globalis_kerdes) VALUES (:question, :theme_id, :user_id, :is_global)");
         oci_bind_by_name($query_insert_question, ":question", $question);
-        oci_bind_by_name($query_insert_question, ":theme_id", $_POST['theme_id']);
+        oci_bind_by_name($query_insert_question, ":theme_id", $theme_id);
+        oci_bind_by_name($query_insert_question, ":user_id", $user_id);
+        oci_bind_by_name($query_insert_question, ":is_global", $is_global);
         oci_execute($query_insert_question);
 
         // Legutóbb beszúrt kérdés ID-jének lekérése
@@ -29,10 +35,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $question_id_row = oci_fetch_assoc($last_question_id);
         $last_question_id = $question_id_row['LAST_ID'];
 
+        // A kérdés beszúrása a 'SZOBA_KERDESEI' táblába
+        $query_insert_room_question = oci_parse($conn, "INSERT INTO szoba_kerdesei (szoba_id, kerdes_id) VALUES (:room_id, :question_id)");
+        oci_bind_by_name($query_insert_room_question, ":room_id", $room_id);
+        oci_bind_by_name($query_insert_room_question, ":question_id", $last_question_id);
+        oci_execute($query_insert_room_question);
+
         // Válaszok mentése és a helyes válasz beállítása
-        for ($i = 1; $i <= 4; $i++) {
+        for ($i = 1; $i <= $_POST['answer_count']; $i++) {
             $answer = $_POST['answer_' . $i];
             $is_correct = isset($_POST['correct_answer_' . $i]) ? 1 : 0;
+
+            // Válasz beszúrása a 'valasz' táblába
             $query_insert_answer = oci_parse($conn, "INSERT INTO valasz (kerdes_id, valasz, helyes_e) VALUES (:question_id, :answer, :is_correct)");
             oci_bind_by_name($query_insert_answer, ":question_id", $last_question_id);
             oci_bind_by_name($query_insert_answer, ":answer", $answer);
@@ -42,9 +56,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
+
 // Témák lekérése az adatbázisból
 $query_themes = oci_parse($conn, "SELECT * FROM tema");
 oci_execute($query_themes);
+
+// Kérdések lekérése a szobához tartozóan az adatbázisból
+$query_room_questions = oci_parse($conn, "
+    SELECT k.*, v.*
+    FROM szoba_kerdesei sk
+    JOIN kerdes k ON sk.kerdes_id = k.id
+    JOIN valasz v ON k.id = v.kerdes_id
+    WHERE sk.szoba_id = :room_id
+");
+oci_bind_by_name($query_room_questions, ":room_id", $room_id);
+oci_execute($query_room_questions);
 
 ?>
 
@@ -71,14 +97,105 @@ oci_execute($query_themes);
             <?php endwhile; ?>
         </select><br><br>
 
-        <?php for ($i = 1; $i <= 4; $i++): ?>
-            <label for="answer_<?php echo $i; ?>">Válasz <?php echo $i; ?>:</label><br>
-            <input type="text" id="answer_<?php echo $i; ?>" name="answer_<?php echo $i; ?>" required>
-            <input type="checkbox" id="correct_answer_<?php echo $i; ?>" name="correct_answer_<?php echo $i; ?>">
-            <label for="correct_answer_<?php echo $i; ?>">Helyes válasz</label><br><br>
-        <?php endfor; ?>
+        <label for="is_global">Globális kérdés?</label>
+        <input type="checkbox" id="is_global" name="is_global"><br><br>
+
+        <script>
+            function updateAnswers(minValue, maxValue) {
+                var answerCount = document.getElementById("answer_count").value;
+                if (answerCount < minValue) {
+                    answerCount = minValue;
+                } else if (answerCount > maxValue) {
+                    answerCount = maxValue;
+                }
+                document.getElementById("answer_count").value = answerCount;
+
+                var answerContainer = document.getElementById("answer_container");
+                answerContainer.innerHTML = "";
+
+                for (var i = 1; i <= answerCount; i++) {
+                    var label = document.createElement("label");
+                    label.setAttribute("for", "answer_" + i);
+                    label.textContent = "Válasz " + i + ":";
+
+                    var input = document.createElement("input");
+                    input.setAttribute("type", "text");
+                    input.setAttribute("id", "answer_" + i);
+                    input.setAttribute("name", "answer_" + i);
+                    input.setAttribute("required", "required");
+
+                    var checkbox = document.createElement("input");
+                    checkbox.setAttribute("type", "checkbox");
+                    checkbox.setAttribute("id", "correct_answer_" + i);
+                    checkbox.setAttribute("name", "correct_answer_" + i);
+                    
+                    var checkboxLabel = document.createElement("label");
+                    checkboxLabel.setAttribute("for", "correct_answer_" + i);
+                    checkboxLabel.textContent = "Helyes válasz";
+
+                    answerContainer.appendChild(label);
+                    answerContainer.appendChild(document.createElement("br"));
+                    answerContainer.appendChild(input);
+                    answerContainer.appendChild(checkbox);
+                    answerContainer.appendChild(checkboxLabel);
+                    answerContainer.appendChild(document.createElement("br"));
+                    answerContainer.appendChild(document.createElement("br"));
+                }
+            }
+            </script>
+
+
+        <label for="answer_count">Válaszok száma:</label>
+        <input type="number" id="answer_count" name="answer_count" min="2" max="10" value="4" onchange="updateAnswers(2,10)" required><br><br>
+
+        <div id="answer_container">
+            <?php
+            $answer_count = isset($_POST['answer_count']) ? $_POST['answer_count'] : 4;
+            for ($i = 1; $i <= $answer_count; $i++):
+            ?>
+                <label for="answer_<?php echo $i; ?>">Válasz <?php echo $i; ?>:</label><br>
+                <input type="text" id="answer_<?php echo $i; ?>" name="answer_<?php echo $i; ?>" required>
+                <input type="checkbox" id="correct_answer_<?php echo $i; ?>" name="correct_answer_<?php echo $i; ?>">
+                <label for="correct_answer_<?php echo $i; ?>">Helyes válasz</label><br><br>
+            <?php endfor; ?>
+        </div>
 
         <button type="submit" name="save_question">Kérdés és válaszok mentése</button>
     </form>
+
+    <h3>Szobához tartozó kérdések</h3>
+    <ul>
+    <?php 
+        oci_execute($query_room_questions); // Ezzel visszaállítjuk az eredményhalmaz pointer-jét
+
+        $last_question_id = null; // Változó a legutóbbi kérdés azonosítójának tárolására
+
+        while ($question = oci_fetch_assoc($query_room_questions)):
+            if ($question['ID'] !== $last_question_id): // Ellenőrizzük, hogy az aktuális kérdés azonosítója eltér-e az előzőtől
+        ?>
+                <li>
+                    <?php echo $question['KERDES']; ?>
+                    <!-- Az aktuális kérdés válaszainak listája -->
+                    <ul>
+                        <?php 
+                        // A válaszokat csak akkor jelenítjük meg, ha az aktuális kérdés azonosítója nem egyezik meg az előzővel
+                        $last_question_id = $question['ID'];
+
+                        // A kérdéshez tartozó válaszok lekérése az adatbázisból
+                        $query_answers = oci_parse($conn, "SELECT * FROM valasz WHERE kerdes_id = :question_id");
+                        oci_bind_by_name($query_answers, ":question_id", $question['ID']);
+                        oci_execute($query_answers);
+
+                        // A válaszok kilistázása
+                        while ($answer = oci_fetch_assoc($query_answers)):
+                        ?>
+                            <li><?php echo $answer['VALASZ']; ?> <?php echo $answer['HELYES_E'] ? "(Helyes válasz)" : ""; ?></li>
+                        <?php endwhile; ?>
+                    </ul>
+                </li>
+        <?php endif; // Az aktuális kérdés megjelenítése véget ért ?>
+        <?php endwhile; ?>
+
+    </ul>
 </body>
 </html>

@@ -14,7 +14,16 @@
 
     <a href="./room.php">Szoba kezelés</a>
 
-
     <a href="../controllers/logout.php">Kijelentkezés</a>
+
+    <a href="./new_question.php">Kérdések kezelése</a>
+    <?php
+        // Ellenőrizzük, hogy az aktuális felhasználó admin-e
+        $conn = connect_to_database();
+        if ($conn && is_admin($conn, $_SESSION['user_id'])) {
+            echo '<a href="./admin.php">Adminisztráció</a>';
+        }
+        close_database_connection($conn);
+    ?>
 </body>
 </html>

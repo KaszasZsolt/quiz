@@ -28,7 +28,10 @@ CREATE TABLE kerdes (
     id NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     kerdes VARCHAR2(255),
     tema_id NUMBER , 
-    FOREIGN KEY (tema_id) REFERENCES tema(id) ON DELETE SET NULL 
+    felhasznalo_id NUMBER,
+    globalis_kerdes NUMBER(1) DEFAULT 0,
+    FOREIGN KEY (tema_id) REFERENCES tema(id) ON DELETE SET NULL,
+    FOREIGN KEY (felhasznalo_id) REFERENCES felhasznalo(id) ON DELETE SET NULL
 );
 
 -- Válasz tábla létrehozása

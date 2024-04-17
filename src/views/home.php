@@ -10,7 +10,7 @@
     <?php include('./header.php'); ?>
 
     <h2>Üdvözöllek, <?php echo $user['NEV']; ?>!</h2>
-    <p>Ez az otthoni oldal. Ide juthatsz csak bejelentkezés után.</p>
+    <p>Ez az home oldal. Ide  csak bejelentkezés után juthatsz.</p>
 
     <a href="./room.php">Szoba kezelés</a>
 

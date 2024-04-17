@@ -1,43 +1,52 @@
 <?php
 session_start();
 include('../../config/db_connection.php');
+include('../../includes/functions.php');
 
 $conn = connect_to_database();
-
-// Ellenőrizze, hogy a felhasználó POST kérésben küldte-e el az új kérdést
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_question'])) {
-    $question_text = $_POST['question_text'];
-    $topic_id = $_POST['topic_id'];
-    $user_id = $_SESSION['user_id']; // A felhasználó ID-jének beolvasása a munkamenetből
-
-    // Kérdés hozzáadása az adatbázishoz
-    $query = oci_parse($conn, "INSERT INTO kerdes (kerdes, tema_id, user_id, global_question) VALUES (:kerdes, :tema_id, :user_id, :global_question)");
-    oci_bind_by_name($query, ":kerdes", $question_text);
-    oci_bind_by_name($query, ":tema_id", $topic_id);
-    oci_bind_by_name($query, ":user_id", $user_id);
-    oci_bind_by_name($query, ":global_question", isset($_POST['global_question']) ? 1 : 0); // Megadja, hogy globális kérdés-e
-    oci_execute($query);
-    $question_id = oci_last_insert_id($conn); // Az utolsó beszúrt kérdés azonosítójának lekérése
-
-    // Válaszok hozzáadása az adatbázishoz
-    if (isset($_POST['num_of_answers'])) {
-        $num_of_answers = (int)$_POST['num_of_answers'];
-        for ($i = 1; $i <= $num_of_answers; $i++) {
-            if (!empty($_POST["answer_$i"])) {
-                $answer_text = $_POST["answer_$i"];
-                $is_correct = (isset($_POST["correct_answer_$i"])) ? 1 : 0;
-
-                $query = oci_parse($conn, "INSERT INTO valasz (kerdes_id, valasz, helyes_e) VALUES (:kerdes_id, :valasz, :helyes_e)");
-                oci_bind_by_name($query, ":kerdes_id", $question_id);
-                oci_bind_by_name($query, ":valasz", $answer_text);
-                oci_bind_by_name($query, ":helyes_e", $is_correct);
-                oci_execute($query);
-            }
-        }
-    }
-
-    echo "Sikeresen hozzáadva az adatbázishoz!";
+if ($conn && !is_admin($conn, $_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit();
 }
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Kérdés és válaszok beállítása
+    if (isset($_POST['save_question'])) {
+        // Kérdés mentése
+        $question = $_POST['question'];
+        $theme_id = $_POST['theme_id'];
+        $is_global = 1;
+
+        // Kérdés beszúrása a 'kerdes' táblába
+        $query_insert_question = oci_parse($conn, "INSERT INTO kerdes (kerdes, tema_id, felhasznalo_id, globalis_kerdes) VALUES (:question, :theme_id, :user_id, :is_global)");
+        oci_bind_by_name($query_insert_question, ":question", $question);
+        oci_bind_by_name($query_insert_question, ":theme_id", $theme_id);
+        oci_bind_by_name($query_insert_question, ":user_id", $user_id);
+        oci_bind_by_name($query_insert_question, ":is_global", $is_global);
+        oci_execute($query_insert_question);
+
+        // Legutóbb beszúrt kérdés ID-jének lekérése
+        $last_question_id = oci_parse($conn, "SELECT MAX(id) AS last_id FROM kerdes");
+        oci_execute($last_question_id);
+        $question_id_row = oci_fetch_assoc($last_question_id);
+        $last_question_id = $question_id_row['LAST_ID'];
+
+        // Válaszok mentése és a helyes válasz beállítása
+        for ($i = 1; $i <= $_POST['answer_count']; $i++) {
+            $answer = $_POST['answer_' . $i];
+            $is_correct = isset($_POST['correct_answer_' . $i]) ? 1 : 0;
+
+            // Válasz beszúrása a 'valasz' táblába
+            $query_insert_answer = oci_parse($conn, "INSERT INTO valasz (kerdes_id, valasz, helyes_e) VALUES (:question_id, :answer, :is_correct)");
+            oci_bind_by_name($query_insert_answer, ":question_id", $last_question_id);
+            oci_bind_by_name($query_insert_answer, ":answer", $answer);
+            oci_bind_by_name($query_insert_answer, ":is_correct", $is_correct);
+            oci_execute($query_insert_answer);
+        }
+        afterPostMethod("Sikeresen hozzáadva");
+    }
+}
+
 
 // Ellenőrizze, hogy a felhasználó POST kérésben küldte-e el a kérdés és válasz törlését
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_question'])) {
@@ -53,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_question'])) {
     oci_bind_by_name($query, ":kerdes_id", $question_id);
     oci_execute($query);
 
-    echo "Sikeresen törölve az adatbázisból!";
+    afterPostMethod("Sikeresen törölve az adatbázisból!");
 }
 
 // Témák lekérése az adatbázisból
@@ -82,55 +91,87 @@ oci_close($conn);
     <title>Új kérdés hozzáadása</title>
 </head>
 <body>
+<?php include('./header.php'); ?>
+
 <h2>Új kérdés hozzáadása</h2>
 
-<!-- Űrlap új kérdés hozzáadásához -->
-<form action="new_question.php" method="post">
-    <label for="question_text">Kérdés szövege:</label><br>
-    <textarea id="question_text" name="question_text" rows="4" cols="50" required></textarea><br><br>
+<h2>Kérdések és válaszok beállítása</h2>
 
-    <label for="topic_id">Téma:</label><br>
-    <select id="topic_id" name="topic_id" required>
-        <?php while ($theme = oci_fetch_assoc($query_themes)): ?>
-            <option value="<?php echo $theme['ID']; ?>"><?php echo $theme['NEV']; ?></option>
-        <?php endwhile; ?>
-    </select><br><br>
+    <form action="" method="post">
+        <label for="question">Kérdés:</label><br>
+        <input type="text" id="question" name="question" required><br>
 
-    <!-- Válaszok -->
-    <!-- Legördülő lista a válaszok számának kiválasztásához -->
-    <label for="num_of_answers">Válaszok száma:</label><br>
-    <select id="num_of_answers" name="num_of_answers" required>
-        <?php for ($i = 2; $i <= 10; $i++): ?>
-            <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
-        <?php endfor; ?>
-    </select><br><br>
+        <label for="theme_id">Téma:</label><br>
+        <select id="theme_id" name="theme_id" required>
+            <?php while ($theme = oci_fetch_assoc($query_themes)): ?>
+                <option value="<?php echo $theme['ID']; ?>"><?php echo $theme['NEV']; ?></option>
+            <?php endwhile; ?>
+        </select><br><br>
 
-    <!-- Válaszok -->
-    <?php if (isset($_POST['num_of_answers'])): ?>
-        <?php $num_of_answers = (int)$_POST['num_of_answers']; ?>
-        <?php for ($i = 1; $i <= $num_of_answers; $i++): ?>
-            <label for="answer_<?php echo $i; ?>">Válasz <?php echo $i; ?>:</label><br>
-            <input type="text" id="answer_<?php echo $i; ?>" name="answer_<?php echo $i; ?>" required><br>
-        <?php endfor; ?>
-    <?php endif; ?>
+        <script>
+            function updateAnswers(minValue, maxValue) {
+                var answerCount = document.getElementById("answer_count").value;
+                if (answerCount < minValue) {
+                    answerCount = minValue;
+                } else if (answerCount > maxValue) {
+                    answerCount = maxValue;
+                }
+                document.getElementById("answer_count").value = answerCount;
 
-    <!-- Helyes válaszok kiválasztása -->
-    <label for="correct_answers">Helyes válaszok:</label><br>
-    <?php if (isset($_POST['num_of_answers'])): ?>
-        <?php $num_of_answers = (int)$_POST['num_of_answers']; ?>
-        <?php for ($i = 1; $i <= $num_of_answers; $i++): ?>
-            <input type="checkbox" id="correct_answer_<?php echo $i; ?>" name="correct_answer_<?php echo $i; ?>">
-            <label for="correct_answer_<?php echo $i; ?>">Válasz <?php echo $i; ?></label><br>
-        <?php endfor; ?>
-    <?php endif; ?>
+                var answerContainer = document.getElementById("answer_container");
+                answerContainer.innerHTML = "";
 
-    <!-- Globális kérdés jelölése -->
-    <label for="global_question">Globális kérdés:</label>
-    <input type="checkbox" id="global_question" name="global_question"><br><br>
+                for (var i = 1; i <= answerCount; i++) {
+                    var label = document.createElement("label");
+                    label.setAttribute("for", "answer_" + i);
+                    label.textContent = "Válasz " + i + ":";
 
-    <!-- Küldés gomb -->
-    <button type="submit" name="submit_question">Kérdés hozzáadása</button>
-</form>
+                    var input = document.createElement("input");
+                    input.setAttribute("type", "text");
+                    input.setAttribute("id", "answer_" + i);
+                    input.setAttribute("name", "answer_" + i);
+                    input.setAttribute("required", "required");
+
+                    var checkbox = document.createElement("input");
+                    checkbox.setAttribute("type", "checkbox");
+                    checkbox.setAttribute("id", "correct_answer_" + i);
+                    checkbox.setAttribute("name", "correct_answer_" + i);
+                    
+                    var checkboxLabel = document.createElement("label");
+                    checkboxLabel.setAttribute("for", "correct_answer_" + i);
+                    checkboxLabel.textContent = "Helyes válasz";
+
+                    answerContainer.appendChild(label);
+                    answerContainer.appendChild(document.createElement("br"));
+                    answerContainer.appendChild(input);
+                    answerContainer.appendChild(checkbox);
+                    answerContainer.appendChild(checkboxLabel);
+                    answerContainer.appendChild(document.createElement("br"));
+                    answerContainer.appendChild(document.createElement("br"));
+                }
+            }
+            </script>
+
+
+        <label for="answer_count">Válaszok száma:</label>
+        <input type="number" id="answer_count" name="answer_count" min="2" max="10" value="4" onchange="updateAnswers(2,10)" required><br><br>
+
+        <div id="answer_container">
+            <?php
+            $answer_count = isset($_POST['answer_count']) ? $_POST['answer_count'] : 4;
+            for ($i = 1; $i <= $answer_count; $i++):
+            ?>
+                <label for="answer_<?php echo $i; ?>">Válasz <?php echo $i; ?>:</label><br>
+                <input type="text" id="answer_<?php echo $i; ?>" name="answer_<?php echo $i; ?>" required>
+                <input type="checkbox" id="correct_answer_<?php echo $i; ?>" name="correct_answer_<?php echo $i; ?>">
+                <label for="correct_answer_<?php echo $i; ?>">Helyes válasz</label><br><br>
+            <?php endfor; ?>
+        </div>
+
+        <button type="submit" name="save_question">Kérdés és válaszok mentése</button>
+    </form>
+
+
 
 <hr>
 

@@ -53,6 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             oci_bind_by_name($query_insert_answer, ":is_correct", $is_correct);
             oci_execute($query_insert_answer);
         }
+        afterPostMethod("Sikeresen hozzáadva");
     }
 }
 
@@ -61,16 +62,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $query_themes = oci_parse($conn, "SELECT * FROM tema");
 oci_execute($query_themes);
 
-// Kérdések lekérése a szobához tartozóan az adatbázisból
-$query_room_questions = oci_parse($conn, "
-    SELECT k.*, v.*
-    FROM szoba_kerdesei sk
-    JOIN kerdes k ON sk.kerdes_id = k.id
-    JOIN valasz v ON k.id = v.kerdes_id
-    WHERE sk.szoba_id = :room_id
-");
-oci_bind_by_name($query_room_questions, ":room_id", $room_id);
-oci_execute($query_room_questions);
 
 ?>
 
@@ -164,38 +155,37 @@ oci_execute($query_room_questions);
     </form>
 
     <h3>Szobához tartozó kérdések</h3>
-    <ul>
-    <?php 
-        oci_execute($query_room_questions); // Ezzel visszaállítjuk az eredményhalmaz pointer-jét
+    <?php
+        // Végrehajtjuk a lekérdezést
+        $query_room_questions = oci_parse($conn, "
+            SELECT k.*, v.*
+            FROM szoba_kerdesei sk
+            JOIN kerdes k ON sk.kerdes_id = k.id
+            JOIN valasz v ON k.id = v.kerdes_id
+            WHERE sk.szoba_id = :room_id
+        ");
+        oci_bind_by_name($query_room_questions, ":room_id", $room_id);
+        oci_execute($query_room_questions);
 
-        $last_question_id = null; // Változó a legutóbbi kérdés azonosítójának tárolására
+        // HTML táblázat létrehozása az eredmények megjelenítéséhez
+        echo "<table border='1'>";
+        echo "<tr><th>Kérdés</th><th>Válasz</th></tr>";
 
-        while ($question = oci_fetch_assoc($query_room_questions)):
-            if ($question['ID'] !== $last_question_id): // Ellenőrizzük, hogy az aktuális kérdés azonosítója eltér-e az előzőtől
-        ?>
-                <li>
-                    <?php echo $question['KERDES']; ?>
-                    <!-- Az aktuális kérdés válaszainak listája -->
-                    <ul>
-                        <?php 
-                        // A válaszokat csak akkor jelenítjük meg, ha az aktuális kérdés azonosítója nem egyezik meg az előzővel
-                        $last_question_id = $question['ID'];
+        while ($row = oci_fetch_array($query_room_questions, OCI_ASSOC+OCI_RETURN_NULLS)) {
+            echo "<tr>";
+            echo "<td>".$row['KERDES']."</td>";
+            // Ellenőrizzük, hogy a válasz helyes-e
+            if ($row['HELYES_E'] == 1) {
+                // Ha helyes, zöld színnel jelenítjük meg
+                echo "<td style='color: green;'>".$row['VALASZ']."</td>";
+            } else {
+                // Ha helytelen, piros színnel jelenítjük meg
+                echo "<td style='color: red;'>".$row['VALASZ']."</td>";
+            }
+            echo "</tr>";
+        }
 
-                        // A kérdéshez tartozó válaszok lekérése az adatbázisból
-                        $query_answers = oci_parse($conn, "SELECT * FROM valasz WHERE kerdes_id = :question_id");
-                        oci_bind_by_name($query_answers, ":question_id", $question['ID']);
-                        oci_execute($query_answers);
-
-                        // A válaszok kilistázása
-                        while ($answer = oci_fetch_assoc($query_answers)):
-                        ?>
-                            <li><?php echo $answer['VALASZ']; ?> <?php echo $answer['HELYES_E'] ? "(Helyes válasz)" : ""; ?></li>
-                        <?php endwhile; ?>
-                    </ul>
-                </li>
-        <?php endif; // Az aktuális kérdés megjelenítése véget ért ?>
-        <?php endwhile; ?>
-
-    </ul>
+        echo "</table>";
+    ?>
 </body>
 </html>

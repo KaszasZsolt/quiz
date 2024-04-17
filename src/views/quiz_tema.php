@@ -42,7 +42,7 @@
             oci_bind_by_name($query_insert, ":uj_tema_nev", $uj_tema_nev);
             oci_execute($query_insert);
             // Frissítsük az oldalt, hogy a hozzáadott téma megjelenjen
-            echo "<meta http-equiv='refresh' content='0'>";
+            afterPostMethod("Új téma hozzáadása sikeres.");
         }
         
         // Quiz témák lekérdezése az adatbázisból
@@ -72,14 +72,16 @@
             oci_bind_by_name($query_update, ":szerkesztes_tema_id", $szerkesztes_tema_id);
             oci_execute($query_update);
             // Frissítsük az oldalt, hogy a módosítások megjelenjenek
-            echo "<meta http-equiv='refresh' content='0'>";
+            
+            afterPostMethod("Sikeres szerkesztes");
         } elseif (isset($_POST["torles"])) {
             $torles_tema_id = $_POST["szerkesztes_tema_id"];
             $query_delete = oci_parse($conn, "DELETE FROM tema WHERE id = :torles_tema_id");
             oci_bind_by_name($query_delete, ":torles_tema_id", $torles_tema_id);
             oci_execute($query_delete);
             // Frissítsük az oldalt, hogy a törlés megjelenjen
-            echo "<meta http-equiv='refresh' content='0'>";
+            afterPostMethod("Sikeres törlés");
+
         }
         echo '<a href="./home.php">Főoldal</a>';
         echo '</div>';

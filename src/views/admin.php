@@ -1,6 +1,9 @@
 <?php
 session_start();
 include('../../config/db_connection.php');
+include('../../includes/functions.php');
+
+
 
 // Ellenőrizzük, hogy az aktuális felhasználó admin-e
 $conn = connect_to_database();
@@ -18,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_topic'])) {
     oci_bind_by_name($query, ":nev", $topic_name);
     oci_execute($query);
 
-    echo "Sikeresen hozzáadva az adatbázishoz!";
+    afterPostMethod("Sikeresen hozzáadva az adatbázishoz!");
 }
 
 // Ellenőrizzük, hogy a felhasználó POST kérésben küldte-e el a téma törlését
@@ -30,43 +33,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_topic'])) {
     oci_bind_by_name($query, ":id", $topic_id);
     oci_execute($query);
 
-    echo "Sikeresen törölve az adatbázisból!";
+    afterPostMethod("Sikeresen törölve az adatbázisból!");
 }
 
 // Témák lekérése az adatbázisból
 $query_themes = oci_parse($conn, "SELECT * FROM tema");
 oci_execute($query_themes);
 
-// Ellenőrizzük, hogy a felhasználó POST kérésben küldte-e el az eredmény törlését
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_result'])) {
-    $result_id = $_POST['result_id'];
 
-    // Eredmény törlése az adatbázisból
+
+
+$query_results = oci_parse($conn, "SELECT eredmeny.*, felhasznalo.nev FROM eredmeny JOIN felhasznalo ON eredmeny.felhasznalo_id = felhasznalo.id");
+oci_execute($query_results);
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_button'])) { // Itt is változtattam
+    $result_id = $_POST['delete_result'];
+
     $query = oci_parse($conn, "DELETE FROM eredmeny WHERE id = :id");
     oci_bind_by_name($query, ":id", $result_id);
     oci_execute($query);
 
-    echo "Sikeresen törölve az adatbázisból!";
+    afterPostMethod("Sikeresen törölve az adatbázisból!");
 }
 
-// Ellenőrizzük, hogy a felhasználó POST kérésben küldte-e el a pontszám módosítását
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_score'])) {
-    $result_id = $_POST['result_id'];
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_button'])) { // Itt is változtattam
+    $result_id = $_POST['update_score'];
     $new_score = $_POST['new_score'];
 
-    // Pontszám frissítése az adatbázisban
     $query = oci_parse($conn, "UPDATE eredmeny SET pontszam = :new_score WHERE id = :id");
     oci_bind_by_name($query, ":new_score", $new_score);
     oci_bind_by_name($query, ":id", $result_id);
     oci_execute($query);
 
-    echo "Pontszám sikeresen frissítve!";
+    afterPostMethod("Pontszám sikeresen frissítve!");
 }
-
-// Eredmények lekérése az adatbázisból
-$query_results = oci_parse($conn, "SELECT * FROM eredmeny");
-oci_execute($query_results);
-
 // Adatbázis kapcsolat lezárása
 oci_close($conn);
 ?>
@@ -79,6 +79,7 @@ oci_close($conn);
     <title>Adminisztráció</title>
 </head>
 <body>
+<?php include('./header.php'); ?>
 <h2>Adminisztráció</h2>
 
 <h3>Témák</h3>
@@ -105,25 +106,30 @@ oci_close($conn);
     <?php endwhile; ?>
 </ul>
 
-<h3>Eredmények</h3>
-<!-- Eredmények listázása -->
-<ul>
-    <?php while ($result = oci_fetch_assoc($query_results)): ?>
-        <li>
-            Felhasználó ID: <?php echo $result['FELHASZNALO_ID']; ?> - Szoba ID: <?php echo $result['SZOBA_ID']; ?> - Pontszám: <?php echo $result['PONTSZAM']; ?>
-            <!-- Pontszám módosításának űrlapja -->
-            <form action="admin.php" method="post" style="display: inline;">
-                <input type="hidden" name="result_id" value="<?php echo $result['ID']; ?>">
-                <input type="number" name="new_score" value="<?php echo $result['PONTSZAM']; ?>" required>
-                <button type="submit" name="update_score">Módosítás</button>
-            </form>
-            <!-- Eredmény törlésének űrlapja -->
-            <form action="admin.php" method="post" style="display: inline;">
-                <input type="hidden" name="result_id" value="<?php echo $result['ID']; ?>">
-                <button type="submit" name="delete_result">Törlés</button>
-            </form>
-        </li>
-    <?php endwhile; ?>
-</ul>
+<h2>Eredmények</h2>
+<table border='1'>
+    <tr>
+        <th>Felhasználó neve</th>
+        <th>Pontszám</th>
+        <th>Műveletek</th>
+    </tr>
+    <?php while ($row = oci_fetch_assoc($query_results)): ?>
+    <tr>
+        <td><?php echo $row['NEV']; ?></td>
+        <td><?php echo $row['PONTSZAM']; ?></td>
+        <td>
+        <form action="admin.php" method="post" style="display: inline;">
+            <input type="hidden" name="delete_result" value="<?php echo $row['ID']; ?>">
+            <button type="submit" name="delete_button">Törlés</button> <!-- Itt változtattam -->
+        </form>
+        <form action="admin.php" method="post" style="display: inline;">
+            <input type="hidden" name="update_score" value="<?php echo $row['ID']; ?>">
+            <input type="number" name="new_score" value="<?php echo $row['PONTSZAM']; ?>" required>
+            <button type="submit" name="update_button">Mentés</button> <!-- Itt változtattam -->
+        </form>
+        </td>
+    </tr>
+<?php endwhile; ?>
+</table>
 </body>
 </html>

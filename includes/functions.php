@@ -24,4 +24,27 @@ function redirect_if_authenticatedLogin() {
         exit();
     }
 }
+function afterPostMethod($message) {
+    // Előkészítjük az üzenetet a következő oldalon való megjelenítésre
+    $_SESSION['message'] = $message;
+    // Átirányítunk a következő oldalra
+    header("Location: ".$_SERVER['REQUEST_URI']);
+    exit();
+}
+function sessionStart(){
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+}
+
+sessionStart();
+// Az üzenet megjelenítése, ha van ilyen
+if (isset($_SESSION['message'])) {
+    echo "<p>" . $_SESSION['message'] . "</p>";
+    // Üzenet törlése a SESSION-ból
+    unset($_SESSION['message']);
+}
+
+
+
 ?>

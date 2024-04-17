@@ -48,8 +48,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 exit();
             } else {
                 $errors[] = "Hiba a regisztráció közben!";
+
             }
-            // Átirányítás a sikeres regisztrációs oldalra
             exit();
         }
     }

@@ -15,8 +15,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $result = create_room($conn, $_POST['room_name'], $_POST['room_password'], $_POST['confirm_password'], $_SESSION['user_id']);
             if ($result) {
-                echo "Sikeresen létrehozott egy új szobát!";
+                afterPostMethod("Sikeresen létrehozott egy új szobát!");
             }
+
         }
     }
     // Szoba szerkesztése
@@ -26,16 +27,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $result = edit_room($conn, $_POST['room_id'], $_POST['room_name'], $_POST['new_password'], $_POST['confirm_new_password']);
             if ($result) {
-                echo "Sikeresen szerkesztette a szobát!";
+                afterPostMethod("Sikeresen szerkesztette a szobát!");
             }
+            
+
         }
     }
     // Szoba törlése
     elseif (isset($_POST['delete_room'])) {
         $result = delete_room($conn, $_POST['room_id']);
         if ($result) {
-            echo "Sikeresen törölte a szobát!";
+            afterPostMethod("Sikeresen törölte a szobát!");
         }
+        
     }
     // Csatlakozás a szobához
     elseif (isset($_POST['join_room'])) {
@@ -46,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header("Location: room_quiz.php?room_id=$room_id");
             exit();
         } else {
-            echo "Hibás szoba azonosító vagy jelszó!";
+            afterPostMethod("Hibás szoba azonosító vagy jelszó!");
         }
     }
 }

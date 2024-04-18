@@ -6,7 +6,7 @@
     <title>Quiz témák kezelése</title>
 </head>
 <body>
-<?php include('./header.php'); ?>
+
     <?php
     if (session_status() === PHP_SESSION_NONE) {
         session_start();
@@ -15,10 +15,15 @@
     include('../../config/db_connection.php');
 
     redirect_if_authenticatedLogin();
+    $conn = connect_to_database();
+    if ($conn && !is_admin($conn, $_SESSION['user_id'])) {
+        header("Location: home.php");
+        exit();
+    }
 
+    include('./header.php');
     $user_id = $_SESSION['user_id'];
 
-    $conn = connect_to_database();
     $query = oci_parse($conn, "SELECT admin_e FROM felhasznalo WHERE id = :user_id");
     oci_bind_by_name($query, ":user_id", $user_id);
     oci_execute($query);

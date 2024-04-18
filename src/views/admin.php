@@ -3,10 +3,9 @@ session_start();
 include('../../config/db_connection.php');
 include('../../includes/functions.php');
 
-
-
 // Ellenőrizzük, hogy az aktuális felhasználó admin-e
 $conn = connect_to_database();
+
 if ($conn && !is_admin($conn, $_SESSION['user_id'])) {
     header("Location: login.php");
     exit();

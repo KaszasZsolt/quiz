@@ -15,9 +15,9 @@ if (session_status() === PHP_SESSION_NONE) {
             <li><a href="home.php">Főoldal</a></li>
             <li><a href="room.php">Szobák</a></li>
             <?php 
-                $conn = connect_to_database();
                 if ($conn && is_admin($conn, $_SESSION['user_id'])) {
                     echo '<li><a href="./admin.php">Adminisztráció</a></li>';
+                    echo '<li><a href="./new_question.php">Kérdések kezelése</a></li>';
                 }
             ?>
         <?php else: ?>

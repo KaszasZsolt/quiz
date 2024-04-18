@@ -72,22 +72,22 @@ CREATE TABLE szoba_kerdesei (
 );
 
 -- Példa rekordok felvitele a felhasznalo táblába
-INSERT INTO felhasznalo (nev, email, jelszo, admin_e) VALUES ('János', 'janos@gmail.com', 'jelszo123', 0);
-INSERT INTO felhasznalo (nev, email, jelszo, admin_e) VALUES ('Alice Johnson', 'alice@example.com', 'pass123', 0);
-INSERT INTO felhasznalo (nev, email, jelszo, admin_e) VALUES ('Bob Smith', 'bob@example.com', 'pass456', 0);
-INSERT INTO felhasznalo (nev, email, jelszo, admin_e) VALUES ('Charlie Brown', 'charlie@example.com', 'pass789', 0);
-INSERT INTO felhasznalo (nev, email, jelszo, admin_e) VALUES ('Diana Miller', 'diana@example.com', 'pass321', 0);
-INSERT INTO felhasznalo (nev, email, jelszo, admin_e) VALUES ('Ethan Davis', 'ethan@example.com', 'pass654', 0);
-INSERT INTO felhasznalo (nev, email, jelszo, admin_e) VALUES ('Fiona Lee', 'fiona@example.com', 'pass987', 0);
-INSERT INTO felhasznalo (nev, email, jelszo, admin_e) VALUES ('George Clark', 'george@example.com', 'pass1234', 0);
-INSERT INTO felhasznalo (nev, email, jelszo, admin_e) VALUES ('Hannah Scott', 'hannah@example.com', 'pass5678', 0);
-INSERT INTO felhasznalo (nev, email, jelszo, admin_e) VALUES ('Isaac Taylor', 'isaac@example.com', 'pass9012', 0);
-INSERT INTO felhasznalo (nev, email, jelszo, admin_e) VALUES ('Julia Wilson', 'julia@example.com', 'pass3456', 0);
-INSERT INTO felhasznalo (nev, email, jelszo, admin_e) VALUES ('Kevin White', 'kevin@example.com', 'pass7890', 0);
-INSERT INTO felhasznalo (nev, email, jelszo, admin_e) VALUES ('Lily Martinez', 'lily@example.com', 'pass12345', 0);
-INSERT INTO felhasznalo (nev, email, jelszo, admin_e) VALUES ('Mike Garcia', 'mike@example.com', 'pass67890', 0);
-INSERT INTO felhasznalo (nev, email, jelszo, admin_e) VALUES ('Natalie Anderson', 'natalie@example.com', 'pass23456', 0);
-INSERT INTO felhasznalo (nev, email, jelszo, admin_e) VALUES ('Oliver Thomas', 'oliver@example.com', 'pass78901', 0);
+INSERT INTO felhasznalo (nev, email, jelszo, admin_e) VALUES ('János', 'janos@gmail.com', '$2y$10$GTNkmBTfmd4rFcwa3lC3L.FJ.0MpbHzsIqeqOuT8JHcFem/J0RpOm', 1);
+INSERT INTO felhasznalo (nev, email, jelszo, admin_e) VALUES ('Alice Johnson', 'alice@example.com', '$2y$10$GTNkmBTfmd4rFcwa3lC3L.FJ.0MpbHzsIqeqOuT8JHcFem/J0RpOm', 1);
+INSERT INTO felhasznalo (nev, email, jelszo, admin_e) VALUES ('Bob Smith', 'bob@example.com', '$2y$10$GTNkmBTfmd4rFcwa3lC3L.FJ.0MpbHzsIqeqOuT8JHcFem/J0RpOm', 0);
+INSERT INTO felhasznalo (nev, email, jelszo, admin_e) VALUES ('Charlie Brown', 'charlie@example.com', '$2y$10$GTNkmBTfmd4rFcwa3lC3L.FJ.0MpbHzsIqeqOuT8JHcFem/J0RpOm', 0);
+INSERT INTO felhasznalo (nev, email, jelszo, admin_e) VALUES ('Diana Miller', 'diana@example.com', '$2y$10$GTNkmBTfmd4rFcwa3lC3L.FJ.0MpbHzsIqeqOuT8JHcFem/J0RpOm', 0);
+INSERT INTO felhasznalo (nev, email, jelszo, admin_e) VALUES ('Ethan Davis', 'ethan@example.com', '$2y$10$GTNkmBTfmd4rFcwa3lC3L.FJ.0MpbHzsIqeqOuT8JHcFem/J0RpOm', 0);
+INSERT INTO felhasznalo (nev, email, jelszo, admin_e) VALUES ('Fiona Lee', 'fiona@example.com', '$2y$10$GTNkmBTfmd4rFcwa3lC3L.FJ.0MpbHzsIqeqOuT8JHcFem/J0RpOm', 0);
+INSERT INTO felhasznalo (nev, email, jelszo, admin_e) VALUES ('George Clark', 'george@example.com', '$2y$10$GTNkmBTfmd4rFcwa3lC3L.FJ.0MpbHzsIqeqOuT8JHcFem/J0RpOm', 0);
+INSERT INTO felhasznalo (nev, email, jelszo, admin_e) VALUES ('Hannah Scott', 'hannah@example.com', '$2y$10$GTNkmBTfmd4rFcwa3lC3L.FJ.0MpbHzsIqeqOuT8JHcFem/J0RpOm', 0);
+INSERT INTO felhasznalo (nev, email, jelszo, admin_e) VALUES ('Isaac Taylor', 'isaac@example.com', '$2y$10$GTNkmBTfmd4rFcwa3lC3L.FJ.0MpbHzsIqeqOuT8JHcFem/J0RpOm', 0);
+INSERT INTO felhasznalo (nev, email, jelszo, admin_e) VALUES ('Julia Wilson', 'julia@example.com', '$2y$10$GTNkmBTfmd4rFcwa3lC3L.FJ.0MpbHzsIqeqOuT8JHcFem/J0RpOm', 0);
+INSERT INTO felhasznalo (nev, email, jelszo, admin_e) VALUES ('Kevin White', 'kevin@example.com', '$2y$10$GTNkmBTfmd4rFcwa3lC3L.FJ.0MpbHzsIqeqOuT8JHcFem/J0RpOm', 0);
+INSERT INTO felhasznalo (nev, email, jelszo, admin_e) VALUES ('Lily Martinez', 'lily@example.com', '$2y$10$GTNkmBTfmd4rFcwa3lC3L.FJ.0MpbHzsIqeqOuT8JHcFem/J0RpOm', 0);
+INSERT INTO felhasznalo (nev, email, jelszo, admin_e) VALUES ('Mike Garcia', 'mike@example.com', '$2y$10$GTNkmBTfmd4rFcwa3lC3L.FJ.0MpbHzsIqeqOuT8JHcFem/J0RpOm', 0);
+INSERT INTO felhasznalo (nev, email, jelszo, admin_e) VALUES ('Natalie Anderson', 'natalie@example.com', '$2y$10$GTNkmBTfmd4rFcwa3lC3L.FJ.0MpbHzsIqeqOuT8JHcFem/J0RpOm', 0);
+INSERT INTO felhasznalo (nev, email, jelszo, admin_e) VALUES ('Oliver Thomas', 'oliver@example.com', '$2y$10$GTNkmBTfmd4rFcwa3lC3L.FJ.0MpbHzsIqeqOuT8JHcFem/J0RpOm', 0);
 
 -- Témák beszúrása
 INSERT INTO tema (nev) VALUES ('Matematika');
@@ -112,38 +112,38 @@ INSERT INTO tema (nev) VALUES ('Élelmiszerek');
 INSERT INTO tema (nev) VALUES ('Utazás és Felfedezés');
 
 -- Kérdések beszúrása
-INSERT INTO kerdes (kerdes, tema_id) VALUES ('Mi az algebrai egyenletek megoldásának első lépése?', 1);
-INSERT INTO kerdes (kerdes, tema_id) VALUES ('Ki volt az első amerikai elnök?', 2);
-INSERT INTO kerdes (kerdes, tema_id) VALUES ('Mi a Föld legnagyobb kontinense?', 3);
-INSERT INTO kerdes (kerdes, tema_id) VALUES ('Mi az angol nyelv legfontosabb nyelvtani alapja?', 4);
-INSERT INTO kerdes (kerdes, tema_id) VALUES ('Mi a víz képlete?', 5);
-INSERT INTO kerdes (kerdes, tema_id) VALUES ('Mi az Einstein által kidolgozott elmélet neve, amely a tömeg és energia kapcsolatát írja le?', 6);
-INSERT INTO kerdes (kerdes, tema_id) VALUES ('Melyik állat a legnagyobb a Földön?', 7);
-INSERT INTO kerdes (kerdes, tema_id) VALUES ('Mi a legnépszerűbb programozási nyelv a világon?', 8);
-INSERT INTO kerdes (kerdes, tema_id) VALUES ('Ki írta a Hamlet című drámát?', 9);
-INSERT INTO kerdes (kerdes, tema_id) VALUES ('Kik voltak a Római Birodalom vezetői?', 10);
-INSERT INTO kerdes (kerdes, tema_id) VALUES ('Melyik ország a legnagyobb kávétermelő a világon?', 11);
-INSERT INTO kerdes (kerdes, tema_id) VALUES ('Mi a GDP?', 12);
-INSERT INTO kerdes (kerdes, tema_id) VALUES ('Melyik sportágban nyert aranyérmet Phelps Michael az olimpián?', 13);
-INSERT INTO kerdes (kerdes, tema_id) VALUES ('Mi a buddhizmus alapítójának neve?', 14);
-INSERT INTO kerdes (kerdes, tema_id) VALUES ('Ki volt a Star Wars filmek rendezője?', 15);
-INSERT INTO kerdes (kerdes, tema_id) VALUES ('Ki volt az "Éljen soká az újvilág!" szlogen szerzője?', 16);
-INSERT INTO kerdes (kerdes, tema_id) VALUES ('Ki volt a Beatlesek egyik alapító tagja?', 17);
-INSERT INTO kerdes (kerdes, tema_id) VALUES ('Mi a legfőbb forrása a földi hőnek?', 18);
-INSERT INTO kerdes (kerdes, tema_id) VALUES ('Melyik zöldségfajta a legnépszerűbb a világon?', 19);
-INSERT INTO kerdes (kerdes, tema_id) VALUES ('Melyik város a leghíresebb turistalátványosságok egyike a Machu Picchuval?', 20);
+INSERT INTO kerdes (kerdes, tema_id, felhasznalo_id,globalis_kerdes) VALUES ('Mi az algebrai egyenletek megoldásának első lépése?', 1,1,1);
+INSERT INTO kerdes (kerdes, tema_id, felhasznalo_id,globalis_kerdes) VALUES ('Ki volt az első amerikai elnök?', 2,1,1);
+INSERT INTO kerdes (kerdes, tema_id, felhasznalo_id,globalis_kerdes) VALUES ('Mi a Föld legnagyobb kontinense?', 3,1,1);
+INSERT INTO kerdes (kerdes, tema_id, felhasznalo_id,globalis_kerdes) VALUES ('Mi az angol nyelv legfontosabb nyelvtani alapja?', 4,1,1);
+INSERT INTO kerdes (kerdes, tema_id, felhasznalo_id,globalis_kerdes) VALUES ('Mi a víz képlete?', 5,1,1);
+INSERT INTO kerdes (kerdes, tema_id, felhasznalo_id,globalis_kerdes) VALUES ('Mi az Einstein által kidolgozott elmélet neve, amely a tömeg és energia kapcsolatát írja le?', 6,1,1);
+INSERT INTO kerdes (kerdes, tema_id, felhasznalo_id,globalis_kerdes) VALUES ('Melyik állat a legnagyobb a Földön?', 7,1,1);
+INSERT INTO kerdes (kerdes, tema_id, felhasznalo_id,globalis_kerdes) VALUES ('Mi a legnépszerűbb programozási nyelv a világon?', 8,1,1);
+INSERT INTO kerdes (kerdes, tema_id, felhasznalo_id,globalis_kerdes) VALUES ('Ki írta a Hamlet című drámát?', 9,1,1);
+INSERT INTO kerdes (kerdes, tema_id, felhasznalo_id,globalis_kerdes) VALUES ('Kik voltak a Római Birodalom vezetői?', 10,1,1);
+INSERT INTO kerdes (kerdes, tema_id, felhasznalo_id,globalis_kerdes) VALUES ('Melyik ország a legnagyobb kávétermelő a világon?', 11,1,1);
+INSERT INTO kerdes (kerdes, tema_id, felhasznalo_id,globalis_kerdes) VALUES ('Mi a GDP?', 12,1,1);
+INSERT INTO kerdes (kerdes, tema_id, felhasznalo_id,globalis_kerdes) VALUES ('Melyik sportágban nyert aranyérmet Phelps Michael az olimpián?', 13,1,1);
+INSERT INTO kerdes (kerdes, tema_id, felhasznalo_id,globalis_kerdes) VALUES ('Mi a buddhizmus alapítójának neve?', 14,1,1);
+INSERT INTO kerdes (kerdes, tema_id, felhasznalo_id,globalis_kerdes) VALUES ('Ki volt a Star Wars filmek rendezője?', 15,1,1);
+INSERT INTO kerdes (kerdes, tema_id, felhasznalo_id,globalis_kerdes) VALUES ('Ki volt az "Éljen soká az újvilág!" szlogen szerzője?', 16,1,1);
+INSERT INTO kerdes (kerdes, tema_id, felhasznalo_id,globalis_kerdes) VALUES ('Ki volt a Beatlesek egyik alapító tagja?', 17,1,1);
+INSERT INTO kerdes (kerdes, tema_id, felhasznalo_id,globalis_kerdes) VALUES ('Mi a legfőbb forrása a földi hőnek?', 18,1,1);
+INSERT INTO kerdes (kerdes, tema_id, felhasznalo_id,globalis_kerdes) VALUES ('Melyik zöldségfajta a legnépszerűbb a világon?', 19,1,1);
+INSERT INTO kerdes (kerdes, tema_id, felhasznalo_id,globalis_kerdes) VALUES ('Melyik város a leghíresebb turistalátványosságok egyike a Machu Picchuval?', 20,1,1);
 
 -- Szobák beszúrása
-INSERT INTO szoba (nev, jelszo, felhasznalo_id) VALUES ('Matematika Szoba', 'math123', 1);
-INSERT INTO szoba (nev, jelszo, felhasznalo_id) VALUES ('Történelem Terem', 'hist456', 2);
-INSERT INTO szoba (nev, jelszo, felhasznalo_id) VALUES ('Földrajz Kuckó', 'geo789', 3);
-INSERT INTO szoba (nev, jelszo, felhasznalo_id) VALUES ('Nyelvtan Stúdió', 'lang321', 4);
-INSERT INTO szoba (nev, jelszo, felhasznalo_id) VALUES ('Kémia Klub', 'chem654', 5);
-INSERT INTO szoba (nev, jelszo, felhasznalo_id) VALUES ('Fizika Fiók', 'phys987', 6);
-INSERT INTO szoba (nev, jelszo, felhasznalo_id) VALUES ('Biológia Bázis', 'bio123', 7);
-INSERT INTO szoba (nev, jelszo, felhasznalo_id) VALUES ('Informatika Inc.', 'it456', 8);
-INSERT INTO szoba (nev, jelszo, felhasznalo_id) VALUES ('Irodalom Ház', 'lit789', 9);
-INSERT INTO szoba (nev, jelszo, felhasznalo_id) VALUES ('Művészet Műhely', 'art321', 10);
+INSERT INTO szoba (nev, jelszo, felhasznalo_id) VALUES ('Matematika Szoba', '$2y$10$GTNkmBTfmd4rFcwa3lC3L.FJ.0MpbHzsIqeqOuT8JHcFem/J0RpOm', 1);
+INSERT INTO szoba (nev, jelszo, felhasznalo_id) VALUES ('Történelem Terem', '$2y$10$GTNkmBTfmd4rFcwa3lC3L.FJ.0MpbHzsIqeqOuT8JHcFem/J0RpOm', 2);
+INSERT INTO szoba (nev, jelszo, felhasznalo_id) VALUES ('Földrajz Kuckó', '$2y$10$GTNkmBTfmd4rFcwa3lC3L.FJ.0MpbHzsIqeqOuT8JHcFem/J0RpOm', 3);
+INSERT INTO szoba (nev, jelszo, felhasznalo_id) VALUES ('Nyelvtan Stúdió', '$2y$10$GTNkmBTfmd4rFcwa3lC3L.FJ.0MpbHzsIqeqOuT8JHcFem/J0RpOm', 4);
+INSERT INTO szoba (nev, jelszo, felhasznalo_id) VALUES ('Kémia Klub', '$2y$10$GTNkmBTfmd4rFcwa3lC3L.FJ.0MpbHzsIqeqOuT8JHcFem/J0RpOm', 5);
+INSERT INTO szoba (nev, jelszo, felhasznalo_id) VALUES ('Fizika Fiók', '$2y$10$GTNkmBTfmd4rFcwa3lC3L.FJ.0MpbHzsIqeqOuT8JHcFem/J0RpOm', 6);
+INSERT INTO szoba (nev, jelszo, felhasznalo_id) VALUES ('Biológia Bázis', '$2y$10$GTNkmBTfmd4rFcwa3lC3L.FJ.0MpbHzsIqeqOuT8JHcFem/J0RpOm', 7);
+INSERT INTO szoba (nev, jelszo, felhasznalo_id) VALUES ('Informatika Inc.', '$2y$10$GTNkmBTfmd4rFcwa3lC3L.FJ.0MpbHzsIqeqOuT8JHcFem/J0RpOm', 8);
+INSERT INTO szoba (nev, jelszo, felhasznalo_id) VALUES ('Irodalom Ház', '$2y$10$GTNkmBTfmd4rFcwa3lC3L.FJ.0MpbHzsIqeqOuT8JHcFem/J0RpOm', 9);
+INSERT INTO szoba (nev, jelszo, felhasznalo_id) VALUES ('Művészet Műhely', '$2y$10$GTNkmBTfmd4rFcwa3lC3L.FJ.0MpbHzsIqeqOuT8JHcFem/J0RpOm', 10);
 
 -- Eredmények beszúrása
 INSERT INTO eredmeny (szoba_id, felhasznalo_id, pontszam) VALUES (1, 1, 85);
@@ -288,11 +288,3 @@ INSERT INTO valasz (kerdes_id, valasz, helyes_e) VALUES (20, 'Brazília', 0);
 INSERT INTO valasz (kerdes_id, valasz, helyes_e) VALUES (20, 'Kolumbia', 0);
 INSERT INTO valasz (kerdes_id, valasz, helyes_e) VALUES (20, 'Chile', 0);
 
---  A törléseket az alábbi utasításokkal teszteltük le:
-DELETE FROM felhasznalo WHERE id = 1;
-DELETE FROM kerdes WHERE id = 1;
-DELETE FROM tema WHERE id = 1;
-
--- a GENERATED ALWAYS kulcsszóval előállított azonosítóoszlop nem módosítható
--- Tesztelt utasítás
--- UPDATE felhasznalo SET id = 15 WHERE id = 2;

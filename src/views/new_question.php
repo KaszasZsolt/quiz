@@ -4,10 +4,14 @@ include('../../config/db_connection.php');
 include('../../includes/functions.php');
 
 $conn = connect_to_database();
+
+redirect_if_authenticatedLogin();
 if ($conn && !is_admin($conn, $_SESSION['user_id'])) {
-    header("Location: login.php");
+    header("Location: home.php");
     exit();
 }
+
+include('./header.php');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Kérdés és válaszok beállítása
@@ -91,7 +95,7 @@ oci_close($conn);
     <title>Új kérdés hozzáadása</title>
 </head>
 <body>
-<?php include('./header.php'); ?>
+
 
 <h2>Új kérdés hozzáadása</h2>
 

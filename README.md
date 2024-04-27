@@ -17,4 +17,4 @@ https://www.youtube.com/watch?v=Y97yPK39cdQ
 
 1. **Adminisztrátorként nyiss meg egy parancssort**.
 2. Írd be az alábbi SSH-tunnel parancsot és nyomj Enter-t:
-   ssh -L 1521:orania2.inf.u-szeged.hu:1521 h873076@linux.inf.u-szeged.hu
+   ssh -L 1521:orania2.inf.u-szeged.hu:1521 hxxxxxx@linux.inf.u-szeged.hu

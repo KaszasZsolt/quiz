@@ -4,7 +4,7 @@ include('../../includes/functions.php');
 include('../../config/db_connection.php');
 
 redirect_if_authenticatedLogin();
-
+redirect_if_authenticatedRoom();
 // Szükséges adatok lekérése a munkamenetből
 $user_id = $_SESSION['user_id'];
 $room_id = $_SESSION['room_id'];

@@ -20,6 +20,11 @@ if (session_status() === PHP_SESSION_NONE) {
                     echo '<li><a href="./new_question.php">Kérdések kezelése</a></li>';
                 }
             ?>
+            <!-- Új menüpontok az adott quiz kitöltése és az eredmények megtekintése számára -->
+            <?php if (isset($_SESSION['room_id'])): ?>
+                <li><a href="quiz.php">Quiz Kitöltése</a></li>
+                <li><a href="quiz_toplist.php">Szoba Eredményei</a></li>
+            <?php endif; ?>
         <?php else: ?>
             <li><a href="register.php">Regisztráció</a></li>
             <li><a href="login.php">Bejelentkezés</a></li>

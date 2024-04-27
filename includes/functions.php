@@ -24,6 +24,14 @@ function redirect_if_authenticatedLogin() {
         exit();
     }
 }
+
+function redirect_if_authenticatedRoom() {
+    if (!isset($_SESSION['room_id'])) {
+        header("Location: room.php");
+        exit();
+    }
+}
+
 function afterPostMethod($message) {
     // Előkészítjük az üzenetet a következő oldalon való megjelenítésre
     $_SESSION['message'] = $message;

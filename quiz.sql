@@ -14,7 +14,8 @@ CREATE TABLE felhasznalo (
     nev VARCHAR2(50),
     email VARCHAR2(100),
     jelszo VARCHAR2(100),
-    admin_e INTEGER
+    admin_e INTEGER,
+    utolso_aktivitas_datum TIMESTAMP
 );
 
 -- Téma tábla létrehozása
@@ -49,6 +50,7 @@ CREATE TABLE szoba (
     nev VARCHAR2(50),
     jelszo VARCHAR2(100),
     felhasznalo_id NUMBER,
+    utolso_aktivitas_datum TIMESTAMP, 
     FOREIGN KEY (felhasznalo_id) REFERENCES felhasznalo(id) ON DELETE CASCADE
 );
 
@@ -71,23 +73,79 @@ CREATE TABLE szoba_kerdesei (
     FOREIGN KEY (kerdes_id) REFERENCES kerdes(id) ON DELETE CASCADE
 );
 
+CREATE OR REPLACE TRIGGER update_last_activity_trigger
+BEFORE INSERT ON eredmeny
+FOR EACH ROW
+BEGIN
+    UPDATE felhasznalo
+    SET utolso_aktivitas_datum = CURRENT_TIMESTAMP
+    WHERE id = :new.felhasznalo_id;
+END;
+/
+
+CREATE OR REPLACE TRIGGER update_room_last_activity_trigger
+AFTER INSERT OR UPDATE OR DELETE ON szoba_kerdesei
+FOR EACH ROW
+DECLARE
+    v_room_id szoba.id%TYPE;
+BEGIN
+    -- Szoba azonosítójának lekérdezése az érintett sor alapján
+    IF INSERTING THEN
+        v_room_id := :new.szoba_id;
+    ELSIF UPDATING THEN
+        v_room_id := :new.szoba_id;
+    ELSIF DELETING THEN
+        v_room_id := :old.szoba_id;
+    END IF;
+
+    -- Szoba utolsó aktivitás dátumának frissítése
+    UPDATE szoba
+    SET utolso_aktivitas_datum = CURRENT_TIMESTAMP
+    WHERE id = v_room_id;
+END;
+/
+
+CREATE OR REPLACE PROCEDURE get_average_score(user_id IN NUMBER,avg_score OUT NUMBER)
+IS
+BEGIN
+    SELECT AVG(pontszam)
+    INTO avg_score
+    FROM eredmeny
+    WHERE felhasznalo_id = user_id;
+END;
+/
+
+
+CREATE OR REPLACE PROCEDURE get_all_room_results (
+    result OUT SYS_REFCURSOR
+)
+IS
+BEGIN
+    OPEN result FOR
+        SELECT e.szoba_id, e.felhasznalo_id, e.pontszam
+        FROM eredmeny e;
+END;
+/
+
+
+
 -- Példa rekordok felvitele a felhasznalo táblába
-INSERT INTO felhasznalo (nev, email, jelszo, admin_e) VALUES ('János', 'janos@gmail.com', '$2y$10$GTNkmBTfmd4rFcwa3lC3L.FJ.0MpbHzsIqeqOuT8JHcFem/J0RpOm', 1);
-INSERT INTO felhasznalo (nev, email, jelszo, admin_e) VALUES ('Alice Johnson', 'alice@example.com', '$2y$10$GTNkmBTfmd4rFcwa3lC3L.FJ.0MpbHzsIqeqOuT8JHcFem/J0RpOm', 1);
-INSERT INTO felhasznalo (nev, email, jelszo, admin_e) VALUES ('Bob Smith', 'bob@example.com', '$2y$10$GTNkmBTfmd4rFcwa3lC3L.FJ.0MpbHzsIqeqOuT8JHcFem/J0RpOm', 0);
-INSERT INTO felhasznalo (nev, email, jelszo, admin_e) VALUES ('Charlie Brown', 'charlie@example.com', '$2y$10$GTNkmBTfmd4rFcwa3lC3L.FJ.0MpbHzsIqeqOuT8JHcFem/J0RpOm', 0);
-INSERT INTO felhasznalo (nev, email, jelszo, admin_e) VALUES ('Diana Miller', 'diana@example.com', '$2y$10$GTNkmBTfmd4rFcwa3lC3L.FJ.0MpbHzsIqeqOuT8JHcFem/J0RpOm', 0);
-INSERT INTO felhasznalo (nev, email, jelszo, admin_e) VALUES ('Ethan Davis', 'ethan@example.com', '$2y$10$GTNkmBTfmd4rFcwa3lC3L.FJ.0MpbHzsIqeqOuT8JHcFem/J0RpOm', 0);
-INSERT INTO felhasznalo (nev, email, jelszo, admin_e) VALUES ('Fiona Lee', 'fiona@example.com', '$2y$10$GTNkmBTfmd4rFcwa3lC3L.FJ.0MpbHzsIqeqOuT8JHcFem/J0RpOm', 0);
-INSERT INTO felhasznalo (nev, email, jelszo, admin_e) VALUES ('George Clark', 'george@example.com', '$2y$10$GTNkmBTfmd4rFcwa3lC3L.FJ.0MpbHzsIqeqOuT8JHcFem/J0RpOm', 0);
-INSERT INTO felhasznalo (nev, email, jelszo, admin_e) VALUES ('Hannah Scott', 'hannah@example.com', '$2y$10$GTNkmBTfmd4rFcwa3lC3L.FJ.0MpbHzsIqeqOuT8JHcFem/J0RpOm', 0);
-INSERT INTO felhasznalo (nev, email, jelszo, admin_e) VALUES ('Isaac Taylor', 'isaac@example.com', '$2y$10$GTNkmBTfmd4rFcwa3lC3L.FJ.0MpbHzsIqeqOuT8JHcFem/J0RpOm', 0);
-INSERT INTO felhasznalo (nev, email, jelszo, admin_e) VALUES ('Julia Wilson', 'julia@example.com', '$2y$10$GTNkmBTfmd4rFcwa3lC3L.FJ.0MpbHzsIqeqOuT8JHcFem/J0RpOm', 0);
-INSERT INTO felhasznalo (nev, email, jelszo, admin_e) VALUES ('Kevin White', 'kevin@example.com', '$2y$10$GTNkmBTfmd4rFcwa3lC3L.FJ.0MpbHzsIqeqOuT8JHcFem/J0RpOm', 0);
-INSERT INTO felhasznalo (nev, email, jelszo, admin_e) VALUES ('Lily Martinez', 'lily@example.com', '$2y$10$GTNkmBTfmd4rFcwa3lC3L.FJ.0MpbHzsIqeqOuT8JHcFem/J0RpOm', 0);
-INSERT INTO felhasznalo (nev, email, jelszo, admin_e) VALUES ('Mike Garcia', 'mike@example.com', '$2y$10$GTNkmBTfmd4rFcwa3lC3L.FJ.0MpbHzsIqeqOuT8JHcFem/J0RpOm', 0);
-INSERT INTO felhasznalo (nev, email, jelszo, admin_e) VALUES ('Natalie Anderson', 'natalie@example.com', '$2y$10$GTNkmBTfmd4rFcwa3lC3L.FJ.0MpbHzsIqeqOuT8JHcFem/J0RpOm', 0);
-INSERT INTO felhasznalo (nev, email, jelszo, admin_e) VALUES ('Oliver Thomas', 'oliver@example.com', '$2y$10$GTNkmBTfmd4rFcwa3lC3L.FJ.0MpbHzsIqeqOuT8JHcFem/J0RpOm', 0);
+INSERT INTO felhasznalo (nev, email, jelszo, admin_e) VALUES ('János', 'janos@gmail.com', '$2y$10$V.q7ctyCwR8/vC2OoK0SJ.xnfEJsiKEwCd87X.B0QDqYvhA9sp1py', 1);
+INSERT INTO felhasznalo (nev, email, jelszo, admin_e) VALUES ('Alice Johnson', 'alice@example.com', '$2y$10$V.q7ctyCwR8/vC2OoK0SJ.xnfEJsiKEwCd87X.B0QDqYvhA9sp1py', 1);
+INSERT INTO felhasznalo (nev, email, jelszo, admin_e) VALUES ('Bob Smith', 'bob@example.com', '$2y$10$V.q7ctyCwR8/vC2OoK0SJ.xnfEJsiKEwCd87X.B0QDqYvhA9sp1py', 0);
+INSERT INTO felhasznalo (nev, email, jelszo, admin_e) VALUES ('Charlie Brown', 'charlie@example.com', '$2y$10$V.q7ctyCwR8/vC2OoK0SJ.xnfEJsiKEwCd87X.B0QDqYvhA9sp1py', 0);
+INSERT INTO felhasznalo (nev, email, jelszo, admin_e) VALUES ('Diana Miller', 'diana@example.com', '$2y$10$V.q7ctyCwR8/vC2OoK0SJ.xnfEJsiKEwCd87X.B0QDqYvhA9sp1py', 0);
+INSERT INTO felhasznalo (nev, email, jelszo, admin_e) VALUES ('Ethan Davis', 'ethan@example.com', '$2y$10$V.q7ctyCwR8/vC2OoK0SJ.xnfEJsiKEwCd87X.B0QDqYvhA9sp1py', 0);
+INSERT INTO felhasznalo (nev, email, jelszo, admin_e) VALUES ('Fiona Lee', 'fiona@example.com', '$2y$10$V.q7ctyCwR8/vC2OoK0SJ.xnfEJsiKEwCd87X.B0QDqYvhA9sp1py', 0);
+INSERT INTO felhasznalo (nev, email, jelszo, admin_e) VALUES ('George Clark', 'george@example.com', '$2y$10$V.q7ctyCwR8/vC2OoK0SJ.xnfEJsiKEwCd87X.B0QDqYvhA9sp1py', 0);
+INSERT INTO felhasznalo (nev, email, jelszo, admin_e) VALUES ('Hannah Scott', 'hannah@example.com', '$2y$10$V.q7ctyCwR8/vC2OoK0SJ.xnfEJsiKEwCd87X.B0QDqYvhA9sp1py', 0);
+INSERT INTO felhasznalo (nev, email, jelszo, admin_e) VALUES ('Isaac Taylor', 'isaac@example.com', '$2y$10$V.q7ctyCwR8/vC2OoK0SJ.xnfEJsiKEwCd87X.B0QDqYvhA9sp1py', 0);
+INSERT INTO felhasznalo (nev, email, jelszo, admin_e) VALUES ('Julia Wilson', 'julia@example.com', '$2y$10$V.q7ctyCwR8/vC2OoK0SJ.xnfEJsiKEwCd87X.B0QDqYvhA9sp1py', 0);
+INSERT INTO felhasznalo (nev, email, jelszo, admin_e) VALUES ('Kevin White', 'kevin@example.com', '$2y$10$V.q7ctyCwR8/vC2OoK0SJ.xnfEJsiKEwCd87X.B0QDqYvhA9sp1py', 0);
+INSERT INTO felhasznalo (nev, email, jelszo, admin_e) VALUES ('Lily Martinez', 'lily@example.com', '$2y$10$V.q7ctyCwR8/vC2OoK0SJ.xnfEJsiKEwCd87X.B0QDqYvhA9sp1py', 0);
+INSERT INTO felhasznalo (nev, email, jelszo, admin_e) VALUES ('Mike Garcia', 'mike@example.com', '$2y$10$V.q7ctyCwR8/vC2OoK0SJ.xnfEJsiKEwCd87X.B0QDqYvhA9sp1py', 0);
+INSERT INTO felhasznalo (nev, email, jelszo, admin_e) VALUES ('Natalie Anderson', 'natalie@example.com', '$2y$10$V.q7ctyCwR8/vC2OoK0SJ.xnfEJsiKEwCd87X.B0QDqYvhA9sp1py', 0);
+INSERT INTO felhasznalo (nev, email, jelszo, admin_e) VALUES ('Oliver Thomas', 'oliver@example.com', '$2y$10$V.q7ctyCwR8/vC2OoK0SJ.xnfEJsiKEwCd87X.B0QDqYvhA9sp1py', 0);
 
 -- Témák beszúrása
 INSERT INTO tema (nev) VALUES ('Matematika');
@@ -134,16 +192,16 @@ INSERT INTO kerdes (kerdes, tema_id, felhasznalo_id,globalis_kerdes) VALUES ('Me
 INSERT INTO kerdes (kerdes, tema_id, felhasznalo_id,globalis_kerdes) VALUES ('Melyik város a leghíresebb turistalátványosságok egyike a Machu Picchuval?', 20,1,1);
 
 -- Szobák beszúrása
-INSERT INTO szoba (nev, jelszo, felhasznalo_id) VALUES ('Matematika Szoba', '$2y$10$GTNkmBTfmd4rFcwa3lC3L.FJ.0MpbHzsIqeqOuT8JHcFem/J0RpOm', 1);
-INSERT INTO szoba (nev, jelszo, felhasznalo_id) VALUES ('Történelem Terem', '$2y$10$GTNkmBTfmd4rFcwa3lC3L.FJ.0MpbHzsIqeqOuT8JHcFem/J0RpOm', 2);
-INSERT INTO szoba (nev, jelszo, felhasznalo_id) VALUES ('Földrajz Kuckó', '$2y$10$GTNkmBTfmd4rFcwa3lC3L.FJ.0MpbHzsIqeqOuT8JHcFem/J0RpOm', 3);
-INSERT INTO szoba (nev, jelszo, felhasznalo_id) VALUES ('Nyelvtan Stúdió', '$2y$10$GTNkmBTfmd4rFcwa3lC3L.FJ.0MpbHzsIqeqOuT8JHcFem/J0RpOm', 4);
-INSERT INTO szoba (nev, jelszo, felhasznalo_id) VALUES ('Kémia Klub', '$2y$10$GTNkmBTfmd4rFcwa3lC3L.FJ.0MpbHzsIqeqOuT8JHcFem/J0RpOm', 5);
-INSERT INTO szoba (nev, jelszo, felhasznalo_id) VALUES ('Fizika Fiók', '$2y$10$GTNkmBTfmd4rFcwa3lC3L.FJ.0MpbHzsIqeqOuT8JHcFem/J0RpOm', 6);
-INSERT INTO szoba (nev, jelszo, felhasznalo_id) VALUES ('Biológia Bázis', '$2y$10$GTNkmBTfmd4rFcwa3lC3L.FJ.0MpbHzsIqeqOuT8JHcFem/J0RpOm', 7);
-INSERT INTO szoba (nev, jelszo, felhasznalo_id) VALUES ('Informatika Inc.', '$2y$10$GTNkmBTfmd4rFcwa3lC3L.FJ.0MpbHzsIqeqOuT8JHcFem/J0RpOm', 8);
-INSERT INTO szoba (nev, jelszo, felhasznalo_id) VALUES ('Irodalom Ház', '$2y$10$GTNkmBTfmd4rFcwa3lC3L.FJ.0MpbHzsIqeqOuT8JHcFem/J0RpOm', 9);
-INSERT INTO szoba (nev, jelszo, felhasznalo_id) VALUES ('Művészet Műhely', '$2y$10$GTNkmBTfmd4rFcwa3lC3L.FJ.0MpbHzsIqeqOuT8JHcFem/J0RpOm', 10);
+INSERT INTO szoba (nev, jelszo, felhasznalo_id) VALUES ('Matematika Szoba', '$2y$10$V.q7ctyCwR8/vC2OoK0SJ.xnfEJsiKEwCd87X.B0QDqYvhA9sp1py', 1);
+INSERT INTO szoba (nev, jelszo, felhasznalo_id) VALUES ('Történelem Terem', '$2y$10$V.q7ctyCwR8/vC2OoK0SJ.xnfEJsiKEwCd87X.B0QDqYvhA9sp1py', 2);
+INSERT INTO szoba (nev, jelszo, felhasznalo_id) VALUES ('Földrajz Kuckó', '$2y$10$V.q7ctyCwR8/vC2OoK0SJ.xnfEJsiKEwCd87X.B0QDqYvhA9sp1py', 3);
+INSERT INTO szoba (nev, jelszo, felhasznalo_id) VALUES ('Nyelvtan Stúdió', '$2y$10$V.q7ctyCwR8/vC2OoK0SJ.xnfEJsiKEwCd87X.B0QDqYvhA9sp1py', 4);
+INSERT INTO szoba (nev, jelszo, felhasznalo_id) VALUES ('Kémia Klub', '$2y$10$V.q7ctyCwR8/vC2OoK0SJ.xnfEJsiKEwCd87X.B0QDqYvhA9sp1py', 5);
+INSERT INTO szoba (nev, jelszo, felhasznalo_id) VALUES ('Fizika Fiók', '$2y$10$V.q7ctyCwR8/vC2OoK0SJ.xnfEJsiKEwCd87X.B0QDqYvhA9sp1py', 6);
+INSERT INTO szoba (nev, jelszo, felhasznalo_id) VALUES ('Biológia Bázis', '$2y$10$V.q7ctyCwR8/vC2OoK0SJ.xnfEJsiKEwCd87X.B0QDqYvhA9sp1py', 7);
+INSERT INTO szoba (nev, jelszo, felhasznalo_id) VALUES ('Informatika Inc.', '$2y$10$V.q7ctyCwR8/vC2OoK0SJ.xnfEJsiKEwCd87X.B0QDqYvhA9sp1py', 8);
+INSERT INTO szoba (nev, jelszo, felhasznalo_id) VALUES ('Irodalom Ház', '$2y$10$V.q7ctyCwR8/vC2OoK0SJ.xnfEJsiKEwCd87X.B0QDqYvhA9sp1py', 9);
+INSERT INTO szoba (nev, jelszo, felhasznalo_id) VALUES ('Művészet Műhely', '$2y$10$V.q7ctyCwR8/vC2OoK0SJ.xnfEJsiKEwCd87X.B0QDqYvhA9sp1py', 10);
 
 -- Eredmények beszúrása
 INSERT INTO eredmeny (szoba_id, felhasznalo_id, pontszam) VALUES (1, 1, 85);

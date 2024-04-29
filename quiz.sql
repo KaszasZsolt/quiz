@@ -127,7 +127,20 @@ BEGIN
 END;
 /
 
-
+CREATE OR REPLACE PROCEDURE get_toplist_for_room (
+    room_id IN NUMBER,
+    result OUT SYS_REFCURSOR
+)
+IS
+BEGIN
+    OPEN result FOR
+        SELECT f.nev AS felhasznalonev, e.pontszam
+        FROM eredmeny e
+        JOIN felhasznalo f ON e.felhasznalo_id = f.id
+        WHERE e.szoba_id = room_id
+        ORDER BY e.pontszam DESC;
+END;
+/
 
 -- Példa rekordok felvitele a felhasznalo táblába
 INSERT INTO felhasznalo (nev, email, jelszo, admin_e) VALUES ('János', 'janos@gmail.com', '$2y$10$V.q7ctyCwR8/vC2OoK0SJ.xnfEJsiKEwCd87X.B0QDqYvhA9sp1py', 1);

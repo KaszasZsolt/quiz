@@ -48,16 +48,16 @@ oci_bind_by_name($query_room_info, ":room_id", $room_id);
 oci_execute($query_room_info);
 $room_info = oci_fetch_assoc($query_room_info);
 
-// Az adott quizhez tartozó top 10 eredmény lekérése
-$query_toplist = oci_parse($conn, "
-    SELECT f.nev AS felhasznalonev, e.pontszam
-    FROM eredmeny e
-    JOIN felhasznalo f ON e.felhasznalo_id = f.id
-    WHERE e.szoba_id = :room_id
-    ORDER BY e.pontszam DESC
-");
-oci_bind_by_name($query_toplist, ":room_id", $room_id);
+
+$query_toplist = oci_new_cursor($conn);
+
+$stmt = oci_parse($conn, "BEGIN get_toplist_for_room(:room_id, :result); END;");
+oci_bind_by_name($stmt, ':room_id', $room_id);
+oci_bind_by_name($stmt, ':result', $query_toplist, -1, OCI_B_CURSOR);
+
+oci_execute($stmt);
 oci_execute($query_toplist);
+
 
 // A játékos eredményének lekérése az adott szobában
 $query_player_result = oci_parse($conn, "
@@ -71,6 +71,9 @@ oci_bind_by_name($query_player_result, ":user_id", $user_id);
 oci_bind_by_name($query_player_result, ":room_id", $room_id);
 oci_execute($query_player_result);
 $player_result = oci_fetch_assoc($query_player_result);
+
+oci_free_statement($stmt);
+oci_close($conn);
 ?>
 
 <!DOCTYPE html>

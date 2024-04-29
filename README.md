@@ -2,7 +2,7 @@
 
 ## SSH Tunnel létrehozása
 
-1. **Adminisztrátorként nyiss meg egy parancssort**.
+1. **Adminisztrátorként nyiss meg egy parancssort (PowerShell)**.
 2. Írd be az alábbi SSH-tunnel parancsot és nyomj Enter-t:
    ssh -L 1521:orania2.inf.u-szeged.hu:1521 hxxxxxx@linux.inf.u-szeged.hu
 
@@ -15,6 +15,6 @@ https://www.youtube.com/watch?v=Y97yPK39cdQ
 ## Ha elszál időközben az adatbázis vagy bármi, édemes nyomni egy terminál ujrainditást és megismételni ezt:
 ## SSH Tunnel létrehozása
 
-1. **Adminisztrátorként nyiss meg egy parancssort**.
+1. **Adminisztrátorként nyiss meg egy parancssort (PowerShell)**.
 2. Írd be az alábbi SSH-tunnel parancsot és nyomj Enter-t:
    ssh -L 1521:orania2.inf.u-szeged.hu:1521 hxxxxxx@linux.inf.u-szeged.hu

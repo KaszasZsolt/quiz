@@ -1,0 +1,25 @@
+header {
+    background-color: #333; /* Háttérszín */
+    padding: 10px 0; /* Belső padding a fejléc körül */
+}
+
+nav ul {
+    list-style-type: none; /* Bullet point-ok eltávolítása */
+    margin: 0;
+    padding: 0;
+}
+
+nav ul li {
+    display: inline; /* Inline elemekként rendezés */
+    margin-right: 20px; /* Jobbra távolság a menüpontok között */
+}
+
+nav ul li a {
+    color: #fff; /* Szöveg színe */
+    text-decoration: none; /* Aláhúzás eltávolítása */
+    font-weight: bold; /* Félkövér betűtípus */
+}
+
+nav ul li a:hover {
+    color: #ccc; /* Egér feletti állapotban a szöveg színe */
+}

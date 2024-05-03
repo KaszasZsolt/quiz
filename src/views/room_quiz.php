@@ -12,6 +12,27 @@ $room_id = $_SESSION['room_id'];
 // Adatbázis kapcsolat létrehozása
 $conn = connect_to_database();
 
+
+
+$query_check_creator_or_admin = oci_parse($conn, "
+    SELECT COUNT(*) AS count
+    FROM szoba
+    WHERE id = :room_id
+    AND (felhasznalo_id = :user_id OR felhasznalo_id IN (SELECT id FROM felhasznalo WHERE admin_e = 1))
+");
+oci_bind_by_name($query_check_creator_or_admin, ":room_id", $room_id);
+oci_bind_by_name($query_check_creator_or_admin, ":user_id", $user_id);
+oci_execute($query_check_creator_or_admin);
+
+$row = oci_fetch_assoc($query_check_creator_or_admin);
+$is_creator_or_admin = $row['count'] > 0;
+
+// Ellenőrizze, hogy a jelenlegi felhasználó a szoba létrehozója vagy admin-e
+if (!$is_creator_or_admin) {
+    header("Location: quiz.php");
+    exit();
+}
+
 // Ha az űrlap elküldésekor POST kérés érkezik
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Kérdés és válaszok beállítása
@@ -74,7 +95,7 @@ oci_execute($query_themes);
 </head>
 <body>
     <?php include('./header.php'); ?>
-
+    <div class="container">
     <h2>Kérdések és válaszok beállítása</h2>
 
     <form action="" method="post">
@@ -144,15 +165,21 @@ oci_execute($query_themes);
             $answer_count = isset($_POST['answer_count']) ? $_POST['answer_count'] : 4;
             for ($i = 1; $i <= $answer_count; $i++):
             ?>
-                <label for="answer_<?php echo $i; ?>">Válasz <?php echo $i; ?>:</label><br>
-                <input type="text" id="answer_<?php echo $i; ?>" name="answer_<?php echo $i; ?>" required>
-                <input type="checkbox" id="correct_answer_<?php echo $i; ?>" name="correct_answer_<?php echo $i; ?>">
-                <label for="correct_answer_<?php echo $i; ?>">Helyes válasz</label><br><br>
+                <div class="answer">
+                    <label for="answer_<?php echo $i; ?>">Válasz <?php echo $i; ?>:</label><br>
+                    <input type="text" id="answer_<?php echo $i; ?>" name="answer_<?php echo $i; ?>" required>
+                    <div class="checkbox-label-inline">
+                        <input type="checkbox" id="correct_answer_<?php echo $i; ?>" name="correct_answer_<?php echo $i; ?>">
+                        <label for="correct_answer_<?php echo $i; ?>">Helyes válasz</label>
+                    </div>
+                </div>
             <?php endfor; ?>
         </div>
 
+
         <button type="submit" name="save_question">Kérdés és válaszok mentése</button>
     </form>
+    </div>
 
     <h3>Szobához tartozó kérdések</h3>
     <?php

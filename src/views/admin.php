@@ -80,19 +80,17 @@ oci_close($conn);
 <body>
 <?php include('./header.php'); ?>
 <h2>Adminisztráció</h2>
-
-<h3>Témák</h3>
-<!-- Űrlap új téma hozzáadásához -->
-<form action="admin.php" method="post">
-    <label for="topic_name">Téma neve:</label><br>
-    <input type="text" id="topic_name" name="topic_name" required><br><br>
-
-    <!-- Küldés gomb -->
-    <button type="submit" name="submit_topic">Téma hozzáadása</button>
-</form>
-
+<div class="container">
+    <h3>Témák</h3>
+    <!-- Űrlap új téma hozzáadásához -->
+    <form action="admin.php" method="post">
+        <label for="topic_name">Téma neve:</label><br>
+        <input type="text" id="topic_name" name="topic_name" required><br><br>
+        <button type="submit" name="submit_topic">Téma hozzáadása</button>
+    </form>
+</div>
 <!-- Témák listázása -->
-<ul>
+<ul class="theme-list">
     <?php while ($theme = oci_fetch_assoc($query_themes)): ?>
         <li>
             <?php echo $theme['NEV']; ?>
@@ -106,7 +104,7 @@ oci_close($conn);
 </ul>
 
 <h2>Eredmények</h2>
-<table border='1'>
+<table class="result-table">
     <tr>
         <th>Felhasználó neve</th>
         <th>Pontszám</th>
@@ -117,14 +115,15 @@ oci_close($conn);
         <td><?php echo $row['NEV']; ?></td>
         <td><?php echo $row['PONTSZAM']; ?></td>
         <td>
-        <form action="admin.php" method="post" style="display: inline;">
-            <input type="hidden" name="delete_result" value="<?php echo $row['ID']; ?>">
-            <button type="submit" name="delete_button">Törlés</button> <!-- Itt változtattam -->
-        </form>
+        
         <form action="admin.php" method="post" style="display: inline;">
             <input type="hidden" name="update_score" value="<?php echo $row['ID']; ?>">
             <input type="number" name="new_score" value="<?php echo $row['PONTSZAM']; ?>" required>
             <button type="submit" name="update_button">Mentés</button> <!-- Itt változtattam -->
+        </form>
+        <form action="admin.php" method="post" style="display: inline;">
+            <input type="hidden" name="delete_result" value="<?php echo $row['ID']; ?>">
+            <button type="submit" name="delete_button">Törlés</button> <!-- Itt változtattam -->
         </form>
         </td>
     </tr>

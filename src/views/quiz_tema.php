@@ -30,10 +30,10 @@
     $user = oci_fetch_assoc($query);
 
     if ($user['ADMIN_E'] == 1) {
-        echo '<div style="background-color: lightblue; padding: 10px; margin-bottom: 10px;">';
         echo '<h3>Quiz témák kezelése</h3>';
         
         // Űrlap megjelenítése új tétel hozzáadásához
+        echo '<div class="container">';
         echo '<h4>Új téma hozzáadása</h4>';
         echo '<form action="" method="post">';
         echo '<input type="text" name="uj_tema_nev" placeholder="Új téma neve">';
@@ -53,6 +53,7 @@
         // Quiz témák lekérdezése az adatbázisból
         $query_temak = oci_parse($conn, "SELECT id, nev FROM tema");
         oci_execute($query_temak);
+        echo '</div>';
         
         echo '<h4>Meglévő témák szerkesztése és törlése</h4>';
         echo '<ul>';
@@ -88,11 +89,9 @@
             afterPostMethod("Sikeres törlés");
 
         }
-        echo '<a href="./home.php">Főoldal</a>';
-        echo '</div>';
+        
     } else {
         echo 'Nincs jogosultsága az admin részhez.';
-        echo '<a href="./home.php">Főoldal</a>';
     }
 
     close_database_connection($conn);

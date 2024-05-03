@@ -1,4 +1,5 @@
 <?php
+
 function authenticate_user($conn, $username, $password) {
     $query = oci_parse($conn, "SELECT * FROM felhasznalo WHERE nev = :username");
     oci_bind_by_name($query, ":username", $username);

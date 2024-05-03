@@ -2,14 +2,6 @@
 include('../../config/db_connection.php');
 
 $conn = connect_to_database(); 
-
-if ($conn) {
-    echo "Sikeres kapcsolat az adatbázishoz!";
-} else {
-    echo "Nem sikerült kapcsolódni az adatbázishoz.";
-}
-
-// Az adatbáziskapcsolat bezárása
 if ($conn) {
     oci_close($conn);
 }
@@ -23,9 +15,18 @@ if ($conn) {
     <title>Adatbázis kapcsolat ellenőrzése</title>
 </head>
 <body>
-<?php include('./header.php'); ?>
-        <form action="login.php" method="post">
-            <button type="submit">Tovább a bejelentkezéshez</button>
-        </form>
+    <?php include('./header.php'); ?>
+    
+    <div class="message-container">
+        <?php
+        if ($conn) {
+            echo "<p class='success-message'> Sikeres kapcsolat az adatbázishoz!</p>";  
+        } else {
+            echo "<p class='error-message'> Nem sikerült kapcsolódni az adatbázishoz.</p>";
+        }
+        ?>
+    </div>
 </body>
+
+
 </html>

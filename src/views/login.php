@@ -7,6 +7,8 @@
 </head>
 <body>
 <?php include('./header.php'); ?>
+<div class="container">
+
     <h2>Bejelentkezés</h2>
     <?php include('../controllers/login_controller.php'); ?>
 
@@ -32,5 +34,6 @@
         <button type="submit">Bejelentkezés</button>
     </form>
     <p>Még nincs fiókod? <a href="register.php">Regisztrálj itt!</a></p>
+</div>
 </body>
 </html>

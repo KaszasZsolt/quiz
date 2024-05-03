@@ -24,26 +24,25 @@ oci_execute($stid);
 $text_with_dots = str_replace(',', '.', $avgScore);
 $szam = floatval($text_with_dots);
 
-echo "Felhasználó átlagpontszáma: " . round($szam, 2);
 
 $query_user_info = oci_parse($conn, "
     SELECT nev
     FROM felhasznalo
     WHERE id = :user_id
 ");
+
 oci_bind_by_name($query_user_info, ":user_id", $user_id);
 oci_execute($query_user_info);
 $user_info = oci_fetch_assoc($query_user_info);
 
-// Az adott szoba nevének lekérése, ahol a felhasználó jelenleg játszik
 $query_room_info = oci_parse($conn, "
     SELECT s.nev AS szoba_neve
     FROM szoba s
     JOIN eredmeny e ON s.id = e.szoba_id
-    WHERE e.felhasznalo_id = :user_id AND s.id = :room_id
+    WHERE s.id = :room_id
     ORDER BY e.id DESC
 ");
-oci_bind_by_name($query_room_info, ":user_id", $user_id);
+
 oci_bind_by_name($query_room_info, ":room_id", $room_id);
 oci_execute($query_room_info);
 $room_info = oci_fetch_assoc($query_room_info);
@@ -76,6 +75,7 @@ oci_free_statement($stmt);
 oci_close($conn);
 ?>
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -86,35 +86,46 @@ oci_close($conn);
 <body>
     <?php include('./header.php'); ?>
 
-    <h2>Quiz Toplista</h2>
+    <div class="toplist-container">
+        <h2>Quiz Toplista</h2>
 
-    <h3>Felhasználói adatok:</h3>
-    <p>Felhasználónév: <?php echo $user_info['NEV']; ?></p>
-    <p>Szoba neve: <?php echo $room_info['SZOBA_NEVE']; ?></p>
+       
 
-    <h3>Toplista:</h3>
-    <ol>
-        <?php
-        // Top 10 felhasználó eredményeinek kilistázása
-        $rank = 1;
-        while ($row = oci_fetch_assoc($query_toplist)) {
-            echo "<li>" . $row['FELHASZNALONEV'] . " - Pontszám: " . $row['PONTSZAM'] . "</li>";
-            $rank++;
-            if ($rank > 10) {
-                break;
+        <div class="toplist">
+            <h3>Toplista:</h3>
+            <ol>
+                <?php
+                // Top 10 felhasználó eredményeinek kilistázása
+                $rank = 1;
+                while ($row = oci_fetch_assoc($query_toplist)) {
+                    echo "<li>" . $row['FELHASZNALONEV'] . " - Pontszám: " . $row['PONTSZAM'] . "</li>";
+                    $rank++;
+                    if ($rank > 10) {
+                        break;
+                    }
+                }
+                ?>
+            </ol>
+        </div>
+        <div class="container">
+            <h3>Felhasználói adatok:</h3>
+            <p>Felhasználónév: <?php echo $user_info['NEV']; ?></p>
+            <p>Szoba neve: <?php echo $room_info['SZOBA_NEVE']; ?></p>
+        </div>
+        <div class="container">
+            <h3>Játékos legutóbbi eredménye:</h3>
+            <?php
+            if ($player_result) {
+                echo "<p>Pontszám: " . $player_result['PONTSZAM'] . "</p>";
+            } else {
+                echo "<p>Még nincs eredményed ebben a szobában.</p>";
             }
-        }
-        ?>
-    </ol>
-
-    <h3>Játékos legutóbbi eredménye:</h3>
-    <?php
-    if ($player_result) {
-        echo "<p>Pontszám: " . $player_result['PONTSZAM'] . "</p>";
-    } else {
-        echo "<p>Még nincs eredményed ebben a szobában.</p>";
-    }
-    ?>
-
+            ?>
+            <h3>Felhasználó átlagpontszáma:</h3>
+            <?php echo "Felhasználó átlagpontszáma: " . round($szam, 2); ?>
+        </div>
+    </div>
 </body>
 </html>
+
+

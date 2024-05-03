@@ -96,9 +96,8 @@ oci_close($conn);
 </head>
 <body>
 
-
+<div class="container">
 <h2>Új kérdés hozzáadása</h2>
-
 <h2>Kérdések és válaszok beállítása</h2>
 
     <form action="" method="post">
@@ -165,16 +164,20 @@ oci_close($conn);
             $answer_count = isset($_POST['answer_count']) ? $_POST['answer_count'] : 4;
             for ($i = 1; $i <= $answer_count; $i++):
             ?>
-                <label for="answer_<?php echo $i; ?>">Válasz <?php echo $i; ?>:</label><br>
-                <input type="text" id="answer_<?php echo $i; ?>" name="answer_<?php echo $i; ?>" required>
-                <input type="checkbox" id="correct_answer_<?php echo $i; ?>" name="correct_answer_<?php echo $i; ?>">
-                <label for="correct_answer_<?php echo $i; ?>">Helyes válasz</label><br><br>
+                <div class="answer">
+                    <label for="answer_<?php echo $i; ?>">Válasz <?php echo $i; ?>:</label><br>
+                    <input type="text" id="answer_<?php echo $i; ?>" name="answer_<?php echo $i; ?>" required>
+                    <div class="checkbox-label-inline">
+                        <input type="checkbox" id="correct_answer_<?php echo $i; ?>" name="correct_answer_<?php echo $i; ?>">
+                        <label for="correct_answer_<?php echo $i; ?>">Helyes válasz</label><br><br>
+                    </div>
+                </div>
             <?php endfor; ?>
         </div>
 
         <button type="submit" name="save_question">Kérdés és válaszok mentése</button>
     </form>
-
+ </div>
 
 
 <hr>
@@ -187,11 +190,13 @@ oci_close($conn);
     <ul>
         <!-- Válaszok listázása -->
         <?php foreach ($question['answers'] as $answer_id => $answer): ?>
-            <li>
-                <?php echo $answer['answer_text']; ?>
-                <?php echo ($answer['is_correct'] == 1) ? "(Helyes válasz)" : ""; ?>
-            </li>
-        <?php endforeach; ?>
+    <li>
+        <div <?php echo ($answer['is_correct'] == 1) ? "class='green-text'" : ""; ?>>
+            <?php echo $answer['answer_text']; ?>
+            <?php echo ($answer['is_correct'] == 1) ? "(Helyes válasz)" : ""; ?>
+        </div>
+    </li>
+<?php endforeach; ?>
     </ul>
     <!-- Kérdés törlésének űrlapja -->
     <form action="new_question.php" method="post">

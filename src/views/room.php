@@ -162,52 +162,62 @@ close_database_connection($conn);
 </head>
 <body>
 <?php include('./header.php'); ?>
-    <h2>Szobák Kezelése</h2>
+
+       <!-- Csatlakozási lehetőség -->
+       <div class="container">
+        <h3>Szobához való csatlakozás:</h3>
+        <form action="room.php" method="post">
+            <label for="room_id">Szoba azonosító:</label><br>
+            <input type="text" id="room_id" name="room_id" required><br>
+
+            <label for="room_password">Szoba jelszó:</label><br>
+            <input type="password" id="room_password" name="room_password" required><br><br>
+
+            <button type="submit" name="join_room">Csatlakozás</button>
+        </form>
+    </div>
 
     <!-- Szobák listázása -->
-    <h3>Általad létrehozott szobák:</h3>
-    <ul>
-        <?php foreach ($rooms as $room): ?>
-            <li>
-                Szoba azonosító: <?php echo $room['ID']; ?><br>
-                Szoba név: <?php echo $room['NEV']; ?><br>
-                <form action="room.php" method="post" style="display: inline;">
-                    <input type="hidden" name="room_id" value="<?php echo $room['ID']; ?>">
-                    <input type="text" name="room_name" value="<?php echo $room['NEV']; ?>">
-                    <input type="password" name="new_password" placeholder="Új jelszó">
-                    <input type="password" name="confirm_new_password" placeholder="Megerősítés">
-                    <button type="submit" name="edit_room">Szerkesztés</button>
-                    <button type="submit" name="delete_room">Törlés</button>
-                </form>
-            </li>
-        <?php endforeach; ?>
-    </ul>
-
+    <div class="room-list">
+    <h3>Általad létrehozott szobák és azok kezelése:</h3>
+        <ul>
+            <?php foreach ($rooms as $room): ?>
+                <li class="room-li">
+                    <div class="room-details">
+                        <p>Szoba azonosító: <?php echo $room['ID']; ?></p>
+                        <p>Szoba név: <?php echo $room['NEV']; ?></p>
+                    </div>
+                    
+                    <form action="room.php" method="post" style="display: inline;">
+                        <input type="hidden" name="room_id" value="<?php echo $room['ID']; ?>">
+                        <input type="text" name="room_name" value="<?php echo $room['NEV']; ?>">
+                        <input type="password" name="new_password" placeholder="Új jelszó">
+                        <input type="password" name="confirm_new_password" placeholder="Megerősítés">
+                        <button type="submit" name="edit_room">Szerkesztés</button>
+                        <button type="submit" name="delete_room">Törlés</button>
+                    </form>
+                </li>
+            <?php endforeach; ?>
+        </ul>
+    </div>
     <!-- Új szoba létrehozása form -->
-    <h3>Új szoba létrehozása:</h3>
-    <form action="room.php" method="post">
-        <label for="room_name">Szoba neve:</label><br>
-        <input type="text" id="room_name" name="room_name" required><br>
+    <div class="container">
+        <h3>Új szoba létrehozása:</h3>
+        <form action="room.php" method="post">
+            <label for="room_name">Szoba neve:</label><br>
+            <input type="text" id="room_name" name="room_name" required><br>
 
-        <label for="room_password">Jelszó:</label><br>
-        <input type="password" id="room_password" name="room_password" required><br><br>
+            <label for="room_password">Jelszó:</label><br>
+            <input type="password" id="room_password" name="room_password" required><br><br>
 
-        <label for="confirm_password">Jelszó megerősítése:</label><br>
-        <input type="password" id="confirm_password" name="confirm_password" required><br><br>
+            <label for="confirm_password">Jelszó megerősítése:</label><br>
+            <input type="password" id="confirm_password" name="confirm_password" required><br><br>
 
-        <button type="submit" name="create_room">Szoba létrehozása</button>
-    </form>
+            <button type="submit" name="create_room">Szoba létrehozása</button>
+        </form>
+    </div>
 
-    <!-- Csatlakozási lehetőség -->
-    <h3>Szobához való csatlakozás:</h3>
-    <form action="room.php" method="post">
-        <label for="room_id">Szoba azonosító:</label><br>
-        <input type="text" id="room_id" name="room_id" required><br>
+ 
 
-        <label for="room_password">Szoba jelszó:</label><br>
-        <input type="password" id="room_password" name="room_password" required><br><br>
-
-        <button type="submit" name="join_room">Csatlakozás</button>
-    </form>
 </body>
 </html>

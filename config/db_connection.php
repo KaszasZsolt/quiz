@@ -29,11 +29,15 @@ function close_database_connection($conn) {
     }
 }
 function is_admin($conn, $user_id) {
-    // Ellenőrizzük, hogy az adott felhasználó admin-e
-    $query = oci_parse($conn, "SELECT admin_e FROM felhasznalo WHERE id = :user_id");
-    oci_bind_by_name($query, ":user_id", $user_id);
-    oci_execute($query);
-    $row = oci_fetch_assoc($query);
-    return ($row && $row['ADMIN_E'] == 1);
+        if (!$user_id) {
+            return;
+        }
+        // Ellenőrizzük, hogy az adott felhasználó admin-e
+        $query = oci_parse($conn, "SELECT admin_e FROM felhasznalo WHERE id = :user_id");
+        oci_bind_by_name($query, ":user_id", $user_id);
+        oci_execute($query);
+        $row = oci_fetch_assoc($query);
+        return ($row && $row['ADMIN_E'] == 1);
+    
 }
 ?>

@@ -12,22 +12,22 @@ $room_id = $_SESSION['room_id'];
 // Adatbázis kapcsolat létrehozása
 $conn = connect_to_database();
 
-
-
 $query_check_creator_or_admin = oci_parse($conn, "
     SELECT COUNT(*) AS count
     FROM szoba
     WHERE id = :room_id
     AND (felhasznalo_id = :user_id OR felhasznalo_id IN (SELECT id FROM felhasznalo WHERE admin_e = 1))
 ");
+
 oci_bind_by_name($query_check_creator_or_admin, ":room_id", $room_id);
 oci_bind_by_name($query_check_creator_or_admin, ":user_id", $user_id);
+
 oci_execute($query_check_creator_or_admin);
 
 $row = oci_fetch_assoc($query_check_creator_or_admin);
-$is_creator_or_admin = $row['count'] > 0;
 
-// Ellenőrizze, hogy a jelenlegi felhasználó a szoba létrehozója vagy admin-e
+$is_creator_or_admin = $row['COUNT'] > 0;
+
 if (!$is_creator_or_admin) {
     header("Location: quiz.php");
     exit();

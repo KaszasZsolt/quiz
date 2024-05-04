@@ -51,7 +51,7 @@ CREATE TABLE szoba (
     jelszo VARCHAR2(100),
     felhasznalo_id NUMBER,
     utolso_aktivitas_datum TIMESTAMP, 
-    FOREIGN KEY (felhasznalo_id) REFERENCES felhasznalo(id) ON DELETE CASCADE
+    FOREIGN KEY (felhasznalo_id) REFERENCES felhasznalo(id) ON DELETE SET NULL
 );
 
 -- Felhasználók eredményei

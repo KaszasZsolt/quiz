@@ -1,10 +1,6 @@
 <?php
 include('../../config/db_connection.php');
-
-$conn = connect_to_database(); 
-if ($conn) {
-    oci_close($conn);
-}
+$conn = connect_to_database();
 ?>
 
 <!DOCTYPE html>

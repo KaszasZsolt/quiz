@@ -38,9 +38,7 @@ $user_info = oci_fetch_assoc($query_user_info);
 $query_room_info = oci_parse($conn, "
     SELECT s.nev AS szoba_neve
     FROM szoba s
-    JOIN eredmeny e ON s.id = e.szoba_id
     WHERE s.id = :room_id
-    ORDER BY e.id DESC
 ");
 
 oci_bind_by_name($query_room_info, ":room_id", $room_id);

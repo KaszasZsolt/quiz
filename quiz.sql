@@ -138,6 +138,7 @@ BEGIN
         FROM eredmeny e
         JOIN felhasznalo f ON e.felhasznalo_id = f.id
         WHERE e.szoba_id = room_id
+        GROUP BY f.nev, e.pontszam
         ORDER BY e.pontszam DESC;
 END;
 /

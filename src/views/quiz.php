@@ -82,11 +82,13 @@ function evaluateQuiz($conn, $room_id, $user_id, $correct_answers) {
     <?php
     // Végrehajtjuk a lekérdezést
     $query_room_questions = oci_parse($conn, "
-        SELECT k.*, v.*
+        SELECT k.tema_id, k.id AS kerdes_id, k.kerdes, v.id AS valasz_id, v.valasz, v.helyes_e
         FROM szoba_kerdesei sk
         JOIN kerdes k ON sk.kerdes_id = k.id
         JOIN valasz v ON k.id = v.kerdes_id
         WHERE sk.szoba_id = :room_id
+        GROUP BY k.tema_id, k.id, k.kerdes, v.id, v.valasz, v.helyes_e
+        ORDER BY k.tema_id
     ");
     oci_bind_by_name($query_room_questions, ":room_id", $room_id);
     oci_execute($query_room_questions);
@@ -102,7 +104,7 @@ function evaluateQuiz($conn, $room_id, $user_id, $correct_answers) {
         echo "<td>".$row['VALASZ']."</td>";
         // Helyes válasz jelölőnégyzetek hozzáadása minden sorhoz
         echo "<td>";
-        echo "<input type='checkbox' name='correct_answers[".$row['KERDES_ID']."][]' value='".$row['ID']."'>";
+        echo "<input type='checkbox' name='correct_answers[".$row['KERDES_ID']."][]' value='".$row['VALASZ_ID']."'>";
         echo "</td>";
         echo "</tr>";
     }

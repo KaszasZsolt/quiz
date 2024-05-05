@@ -185,6 +185,51 @@
         // Adatbázis kapcsolat lezárása
         oci_close($conn);
         ?>
+        <?php
+                
+        // Ellenőrizni kell a kapcsolódás sikerességét
+        if (!$conn) {
+            $e = oci_error();
+            trigger_error(htmlentities($e['message'], ENT_QUOTES), E_USER_ERROR);
+        }  
+
+        // SQL lekérdezés definiálása
+        $sql = "
+        SELECT * FROM (
+            SELECT f.nev AS felhasznalo_neve, f.email AS felhasznalo_email, COALESCE(SUM(e.pontszam), 0) AS osszesitett_pontszam
+            FROM felhasznalo f
+            LEFT JOIN eredmeny e ON f.id = e.felhasznalo_id
+            GROUP BY f.nev, f.email
+            ORDER BY COALESCE(SUM(e.pontszam), 0) DESC
+        ) WHERE ROWNUM <= 5";
+
+        // Lekérdezés végrehajtása
+        $query = oci_parse($conn, $sql);
+        oci_execute($query);
+
+        // Az eredmény kiírása
+        echo "<h2>Öt legaktívabb felhasználó az eredmények alapján:</h2>";
+        echo "<table border='1'>
+                <tr>
+                    <th>Felhasználó neve</th>
+                    <th>E-mail cím</th>
+                    <th>Összesített pontszám</th>
+                </tr>";
+
+        while ($row = oci_fetch_assoc($query)) {
+            echo "<tr>
+                    <td>" . $row['FELHASZNALO_NEVE'] . "</td>
+                    <td>" . $row['FELHASZNALO_EMAIL'] . "</td>
+                    <td>" . $row['OSSZESITETT_PONTSZAM'] . "</td>
+                </tr>";
+        }
+
+        echo "</table>";
+
+        // Adatbázis kapcsolat lezárása
+        oci_close($conn);
+        ?>
+
     </div>
 </body>
 </html>

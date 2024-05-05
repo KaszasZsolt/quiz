@@ -106,12 +106,12 @@ oci_close($conn);
             </ol>
         </div>
         <div class="container">
-            <h3>Felhasználói adatok:</h3>
+            <h3>Adatok:</h3>
             <p>Felhasználónév: <?php echo $user_info['NEV']; ?></p>
             <p>Szoba neve: <?php echo $room_info['SZOBA_NEVE']; ?></p>
         </div>
         <div class="container">
-            <h3>Játékos legutóbbi eredménye:</h3>
+            <h3>Felhasználó legutóbbi eredménye:</h3>
             <?php
             if ($player_result) {
                 echo "<p>Pontszám: " . $player_result['PONTSZAM'] . "</p>";

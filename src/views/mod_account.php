@@ -94,7 +94,7 @@ oci_close($conn);
 <body>
 <?php include('./header.php'); ?>
 
-<h2>Eredmények</h2>
+<h2>Felhasználók</h2>
 <table class="result-table">
     <tr>
         <th>Felhasználó neve</th>

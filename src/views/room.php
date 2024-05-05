@@ -105,6 +105,10 @@ function edit_room($conn, $room_id, $room_name, $new_password, $confirm_new_pass
 // Függvény a szoba törléséhez
 function delete_room($conn, $room_id) {
     // SQL lekérdezés előkészítése a szoba törléséhez
+    $query_delete_room_questions = oci_parse($conn, "DELETE FROM szoba_kerdesei WHERE szoba_id = :room_id");
+    oci_bind_by_name($query_delete_room_questions, ":room_id", $room_id);
+    oci_execute($query_delete_room_questions);
+    
     $query = oci_parse($conn, "DELETE FROM szoba WHERE id = :id");
     oci_bind_by_name($query, ":id", $room_id);
 

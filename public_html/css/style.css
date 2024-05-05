@@ -287,9 +287,17 @@ button[name="delete_button"] {
     background-color: #e74c3c; /* Piros szín */
 }
 
+button[name="delete_room"] {
+    background-color: #e74c3c; /* Piros szín */
+}
+
 button[name="delete_button"]:hover {
     background-color: #c0392b; /* Piros szín */
 }
+button[name="delete_room"]:hover {
+    background-color: #c0392b; /* Piros szín */
+}
+
 button[name="torles"] {
     background-color: #e74c3c; /* Piros szín */
 }
